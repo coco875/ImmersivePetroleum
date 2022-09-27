@@ -1,0 +1,3 @@
+Tarmac
+Motorway material
+<&asphalt0>Tarmac, held together by gooey Bitumen, is a darker coloured alternative to regular Concrete. It may be produced using the byproducts of processing Crude Oil in the <link;immersivepetroleum:distillationtower;§n§oDistillation §n§oTower§r>.

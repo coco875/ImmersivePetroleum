@@ -5,5 +5,6 @@
 	ja_JP: aiun, w2w2-2, koh-gh
 	es_es: Nekrodamus(FrannDzs)
 	ko_KR: Nik-mmzd, FreddyYJ, Taki_B, PixVoxel
+	en_gb: Midnighttigger
 
 #### Please add yourself to the list above if you add and/or update one or more language files!
