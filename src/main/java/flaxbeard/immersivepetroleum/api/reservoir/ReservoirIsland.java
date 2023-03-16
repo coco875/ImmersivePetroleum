@@ -7,7 +7,6 @@ import java.util.Objects;
 
 import javax.annotation.Nonnull;
 
-import flaxbeard.immersivepetroleum.common.IPSaveData;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -193,7 +192,8 @@ public class ReservoirIsland{
 		
 		if(fluidAction == FluidAction.EXECUTE){
 			this.amount -= extracted;
-			IPSaveData.markInstanceAsDirty();
+			// TODO Add a reference to the RegionData this ReservoirIsland is assigned to.
+			//IPSaveData.markInstanceAsDirty();
 		}
 		
 		return extracted;
@@ -211,7 +211,8 @@ public class ReservoirIsland{
 			int flow = (int) Math.min(getFlow(pressure), this.amount);
 			
 			this.amount -= flow;
-			IPSaveData.markInstanceAsDirty();
+			// TODO Add a reference to the RegionData this ReservoirIsland is assigned to.
+			//IPSaveData.markInstanceAsDirty();
 			return flow;
 		}
 		

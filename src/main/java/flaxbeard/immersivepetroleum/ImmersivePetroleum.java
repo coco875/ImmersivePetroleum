@@ -20,6 +20,7 @@ import flaxbeard.immersivepetroleum.common.IPContent.Fluids;
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.IPToolShaders;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.cfg.IPClientConfig;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.crafting.RecipeReloadListener;
@@ -158,6 +159,8 @@ public class ImmersivePetroleum{
 		if(!world.isClientSide){
 			IPSaveData worldData = world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
 			IPSaveData.setInstance(worldData);
+			
+			ReservoirRegionDataStorage.init(world.getDataStorage());
 		}
 		
 		ReservoirHandler.recalculateChances();

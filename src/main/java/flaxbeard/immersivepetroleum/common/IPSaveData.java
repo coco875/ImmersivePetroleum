@@ -5,12 +5,9 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import com.google.common.collect.Multimap;
-
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
-import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
@@ -29,24 +26,6 @@ public class IPSaveData extends SavedData{
 	}
 	
 	public IPSaveData(CompoundTag nbt){
-		ListTag reservoirs = nbt.getList("reservoirs", Tag.TAG_COMPOUND);
-		if(!reservoirs.isEmpty()){
-			Multimap<ResourceKey<Level>, ReservoirIsland> mainList = ReservoirHandler.getReservoirIslandList();
-			synchronized(mainList){
-				ImmersivePetroleum.log.debug("[ReservoirIslands]: Reading...");
-				for(int i = 0;i < reservoirs.size();i++){
-					CompoundTag dim = reservoirs.getCompound(i);
-					ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
-					ResourceKey<Level> dimType = ResourceKey.create(Registry.DIMENSION_REGISTRY, rl);
-					ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
-					
-					List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt)).filter(o -> o != null).collect(Collectors.toList());
-					mainList.putAll(dimType, list);
-					ImmersivePetroleum.log.debug("[ReservoirIslands]: Read {} islands for dim {}", list.size(), dimType.toString());
-				}
-			}
-		}
-		
 		ListTag lubricatedList = nbt.getList("lubricated", Tag.TAG_COMPOUND);
 		LubricatedHandler.lubricatedTiles.clear();
 		for(int i = 0;i < lubricatedList.size();i++){
@@ -54,11 +33,32 @@ public class IPSaveData extends SavedData{
 			LubricatedTileInfo info = new LubricatedTileInfo(tag);
 			LubricatedHandler.lubricatedTiles.add(info);
 		}
+		
+		// TODO Backwards compability. Remove in 1.19.x!
+		ListTag reservoirs;
+		if(nbt.contains("reservoirs", Tag.TAG_COMPOUND) && (reservoirs = nbt.getList("reservoirs", Tag.TAG_COMPOUND)).isEmpty()){
+			ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+			
+			ImmersivePetroleum.log.debug("[ReservoirIslands]: Reading...");
+			for(int i = 0;i < reservoirs.size();i++){
+				CompoundTag dim = reservoirs.getCompound(i);
+				ResourceLocation rl = new ResourceLocation(dim.getString("dimension"));
+				ResourceKey<Level> dimType = ResourceKey.create(Registry.DIMENSION_REGISTRY, rl);
+				ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
+				
+				List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt)).filter(o -> o != null).collect(Collectors.toList());
+				list.forEach(island -> {
+					storage.addIsland(dimType, island);
+				});
+				ImmersivePetroleum.log.debug("[ReservoirIslands]: Read {} islands for dim {}", list.size(), dimType.toString());
+			}
+		}
 	}
 	
 	@Override
 	@Nonnull
 	public CompoundTag save(@Nonnull CompoundTag nbt){
+		/*
 		ListTag reservoirs = new ListTag();
 		synchronized(ReservoirHandler.getReservoirIslandList()){
 			for(ResourceKey<Level> dimension:ReservoirHandler.getReservoirIslandList().keySet()){
@@ -75,6 +75,7 @@ public class IPSaveData extends SavedData{
 			}
 		}
 		nbt.put("reservoirs", reservoirs);
+		*/
 		
 		ListTag lubricatedList = new ListTag();
 		for(LubricatedTileInfo info:LubricatedHandler.lubricatedTiles){

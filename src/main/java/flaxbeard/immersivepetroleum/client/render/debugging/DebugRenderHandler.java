@@ -1,7 +1,6 @@
 package flaxbeard.immersivepetroleum.client.render.debugging;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import com.mojang.blaze3d.vertex.PoseStack;
@@ -22,6 +21,8 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.AutoLubricatorTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity.CokingChamber;
@@ -46,6 +47,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.InteractionHand;
@@ -317,20 +319,32 @@ public class DebugRenderHandler{
 					
 					matrix.pushPose();
 					{
-						synchronized(ReservoirHandler.getReservoirIslandList()){
+						ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+						final ColumnPos playerRegionPos = storage.toRegionCoords(playerPos);
+						final ResourceKey<Level> dimKey = player.getCommandSenderWorld().dimension();
+						final List<ReservoirIsland> islands = new ArrayList<>();
+						for(int z = -1;z <= 1;z++){
+							for(int x = -1;x <= 1;x++){
+								RegionData rd = storage.getRegionDataFor(new ColumnPos(playerRegionPos.x + x, playerRegionPos.z + z));
+								if(rd != null){
+									synchronized(rd.getReservoirIslandList()){
+										islands.addAll(rd.getReservoirIslandList().get(dimKey));
+									}
+								}
+							}
+						}
+						
+						{
 							MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
-							
-							Collection<ReservoirIsland> islands = ReservoirHandler.getReservoirIslandList().get(player.getCommandSenderWorld().dimension());
 							
 							if(islands != null && !islands.isEmpty()){
 								float y = 128.0625F;
 								int radius = 128;
 								radius = radius * radius + radius * radius;
 								for(ReservoirIsland island:islands){
-									BlockPos p = new BlockPos(playerPos.getX(), 0, playerPos.getZ());
 									BlockPos center = island.getBoundingBox().getCenter();
 									
-									if(center.distSqr(p) <= radius){
+									if(center.distSqr(playerPos) <= radius){
 										AxisAlignedIslandBB bounds = island.getBoundingBox();
 										matrix.pushPose();
 										{

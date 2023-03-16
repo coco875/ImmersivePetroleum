@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.util.commands;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
@@ -22,6 +21,8 @@ import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
 import flaxbeard.immersivepetroleum.common.IPSaveData;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
@@ -34,7 +35,9 @@ import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ColumnPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.FluidStack;
 
 public class IslandCommand{
@@ -70,13 +73,23 @@ public class IslandCommand{
 		int rangeSqr = range * range;
 		
 		Set<ReservoirIsland> nearby = new HashSet<>();
-		synchronized(ReservoirHandler.getReservoirIslandList()){
-			Collection<ReservoirIsland> list = ReservoirHandler.getReservoirIslandList().get(source.getLevel().dimension());
-			list.forEach(island -> {
-				if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
-					nearby.add(island);
+		
+		ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+		final ColumnPos playerRegionPos = storage.toRegionCoords(pos);
+		final ResourceKey<Level> dimKey = source.getLevel().dimension();
+		for(int rz = -1;rz <= 1;rz++){
+			for(int rx = -1;rx <= 1;rx++){
+				RegionData rd = storage.getRegionDataFor(new ColumnPos(playerRegionPos.x + rx, playerRegionPos.z + rz));
+				if(rd != null){
+					synchronized(rd.getReservoirIslandList()){
+						rd.getReservoirIslandList().get(dimKey).forEach(island -> {
+							if(island.getBoundingBox().getCenter().distToCenterSqr(dx, 0, dz) <= rangeSqr){
+								nearby.add(island);
+							}
+						});
+					}
 				}
-			});
+			}
 		}
 		
 		if(nearby.isEmpty()){

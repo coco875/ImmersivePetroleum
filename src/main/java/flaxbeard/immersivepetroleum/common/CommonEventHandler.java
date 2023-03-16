@@ -9,15 +9,12 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import com.google.common.collect.Multimap;
-
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.ILubricationHandler;
 import flaxbeard.immersivepetroleum.api.crafting.LubricatedHandler.LubricatedTileInfo;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
-import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
@@ -28,7 +25,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.FluidTags;
@@ -75,14 +71,8 @@ public class CommonEventHandler{
 	
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void onServerStopped(ServerStoppedEvent event){
-		Multimap<ResourceKey<Level>, ReservoirIsland> mainList = ReservoirHandler.getReservoirIslandList();
-		synchronized(mainList){
-			ImmersivePetroleum.log.debug("[ReservoirIslands]: Clearing main list.");
-			mainList.clear();
-			
-			ImmersivePetroleum.log.debug("[ReservoirIslands]: Clearing Cache...");
-			ReservoirHandler.clearCache();
-		}
+		ImmersivePetroleum.log.debug("[ReservoirIslands]: Clearing Cache...");
+		ReservoirHandler.clearCache();
 	}
 	
 	@SubscribeEvent
