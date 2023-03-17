@@ -20,7 +20,6 @@ import flaxbeard.immersivepetroleum.api.reservoir.AxisAlignedIslandBB;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirIsland;
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirType;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import flaxbeard.immersivepetroleum.common.util.Utils;
@@ -169,7 +168,7 @@ public class IslandCommand{
 	private static int setReservoirAmount(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		long amount = context.getArgument("amount", Long.class);
 		island.setAmount(amount);
-		IPSaveData.markInstanceAsDirty();
+		island.setDirty();
 		
 		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.amount.success", island.getAmount());
 		return Command.SINGLE_SUCCESS;
@@ -178,7 +177,7 @@ public class IslandCommand{
 	private static int setReservoirCapacity(CommandContext<CommandSourceStack> context, @Nonnull ReservoirIsland island){
 		long capacity = context.getArgument("capacity", Long.class);
 		island.setAmountAndCapacity(capacity, capacity);
-		IPSaveData.markInstanceAsDirty();
+		island.setDirty();
 		
 		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.capacity.success", island.getCapacity());
 		return Command.SINGLE_SUCCESS;
@@ -198,7 +197,7 @@ public class IslandCommand{
 		}
 		
 		island.setReservoirType(reservoir);
-		IPSaveData.markInstanceAsDirty();
+		island.setDirty();
 		
 		CommandUtils.sendTranslated(context.getSource(), "chat.immersivepetroleum.command.reservoir.set.type.success", reservoir.name);
 		return Command.SINGLE_SUCCESS;

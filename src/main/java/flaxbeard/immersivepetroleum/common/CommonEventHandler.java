@@ -66,6 +66,7 @@ public class CommonEventHandler{
 	public void onUnload(WorldEvent.Unload event){
 		if(!event.getWorld().isClientSide()){
 			IPSaveData.markInstanceAsDirty();
+			ReservoirRegionDataStorage.get().markAllDirty();
 		}
 	}
 	

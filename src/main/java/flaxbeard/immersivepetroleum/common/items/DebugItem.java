@@ -16,7 +16,6 @@ import flaxbeard.immersivepetroleum.client.model.IPModel;
 import flaxbeard.immersivepetroleum.client.model.IPModels;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPSaveData;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
@@ -148,7 +147,7 @@ public class DebugItem extends IPItemBase{
 						
 						if(playerIn.isShiftKeyDown()){
 							island.setAmount(island.getCapacity());
-							IPSaveData.markInstanceAsDirty();
+							island.setDirty();
 							playerIn.displayClientMessage(new TextComponent("Island Refilled."), true);
 							return new InteractionResultHolder<>(InteractionResult.SUCCESS, playerIn.getItemInHand(handIn));
 						}

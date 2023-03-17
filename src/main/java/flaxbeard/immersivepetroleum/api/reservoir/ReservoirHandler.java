@@ -18,6 +18,7 @@ import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage;
+import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -90,8 +91,8 @@ public class ReservoirHandler{
 							
 							if(!poly.isEmpty()){
 								int amount = (int) Mth.lerp(random.nextFloat(), reservoir.minSize, reservoir.maxSize);
-								ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
 								
+								ReservoirIsland island = new ReservoirIsland(poly, reservoir, amount);
 								storage.addIsland(dimensionKey, island);
 							}
 						}
@@ -138,8 +139,6 @@ public class ReservoirHandler{
 			return null;
 		}
 		
-		// TODO Maybe do this better somehow? It'll do for testing, but not for real-world stuff probably
-		
 		ResourceKey<Level> dimension = world.dimension();
 		Pair<ResourceKey<Level>, ColumnPos> cacheKey = Pair.of(dimension, pos);
 		synchronized(CACHE){
@@ -165,18 +164,6 @@ public class ReservoirHandler{
 		if(world.isClientSide){
 			return null;
 		}
-		
-		/*
-		ResourceKey<Level> dimension = world.dimension();
-		synchronized(RESERVOIR_ISLAND_LIST){
-			for(ReservoirIsland island:RESERVOIR_ISLAND_LIST.get(dimension)){
-				if(island.contains(pos)){
-					// There's no such thing as overlapping islands, so just return what was found directly
-					return island;
-				}
-			}
-		}
-		*/
 		
 		ReservoirIsland island = ReservoirRegionDataStorage.get().getIsland(world, pos);
 		return island;
@@ -257,7 +244,8 @@ public class ReservoirHandler{
 	 * {@link #clearCache()} Must be called after modifying the returned list!
 	 * 
 	 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
-	 * @deprecated
+	 * 
+	 * @deprecated<br>Use {@link RegionData#getReservoirIslandList()} from {@link ReservoirRegionDataStorage#getIsland(Level, BlockPos)}
 	 */
 	@Deprecated(forRemoval = true)
 	public static Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){

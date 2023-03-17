@@ -34,7 +34,6 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
  * @author TwistedGate
  */
 public class ReservoirRegionDataStorage extends SavedData{
-	// FIXME ! Switch all from info to debug later!!
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/RegionDataStorage");
 	
 	private static final String DATA_NAME = "ip-regions";
@@ -47,7 +46,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	
 	public static final void init(DimensionDataStorage dimData){
 		active_instance = dimData.computeIfAbsent(t -> load(dimData, t), () -> {
-			log.info("Creating new ReservoirRegionDataStorage instance.");
+			log.debug("Creating new ReservoirRegionDataStorage instance.");
 			return new ReservoirRegionDataStorage(dimData);
 		}, DATA_NAME);
 	}
@@ -78,12 +77,11 @@ public class ReservoirRegionDataStorage extends SavedData{
 		});
 		nbt.put("regions", list);
 		
-		log.info("Saved regions file.");
+		log.debug("Saved regions file.");
 		return nbt;
 	}
 	
 	private void load(CompoundTag nbt){
-		log.info("Started: Loading regions.");
 		ListTag regions = nbt.getList("regions", Tag.TAG_COMPOUND);
 		for(int i = 0;i < regions.size();i++){
 			CompoundTag tag = regions.getCompound(i);
@@ -95,10 +93,14 @@ public class ReservoirRegionDataStorage extends SavedData{
 			this.regions.put(rPos, rData);
 		}
 		
-		log.info("Loaded regions file.");
+		log.debug("Loaded regions file.");
 	}
 	
-	// All of the methods below may not be final and are subject to (heavy) change!
+	/** Marks itself and all regions as dirty. (Only to be used by {@link CommonEventHandler#onUnload(net.minecraftforge.event.world.WorldEvent.Unload)}) */
+	public void markAllDirty(){
+		setDirty();
+		this.regions.values().forEach(RegionData::setDirty);
+	}
 	
 	public void addIsland(ResourceKey<Level> dimensionKey, ReservoirIsland island){
 		ColumnPos regionPos = toRegionCoords(island.getBoundingBox().getCenter());
@@ -107,6 +109,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 		synchronized(regionData.reservoirlist){
 			if(!regionData.reservoirlist.containsEntry(dimensionKey, island)){
 				regionData.reservoirlist.put(dimensionKey, island);
+				island.setRegion(regionData);
 				regionData.setDirty();
 			}
 		}
@@ -167,7 +170,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 			String fn = getRegionFileName(p);
 			RegionData data = this.dimData.computeIfAbsent(t -> new RegionData(p, t), () -> new RegionData(p), fn);
 			setDirty();
-			log.info("Created RegionData for [{}, {}]", regionPos.x, regionPos.z);
+			log.debug("Created RegionData[{}, {}]", regionPos.x, regionPos.z);
 			return data;
 		});
 		return ret;
@@ -223,7 +226,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 			}
 			nbt.put("reservoirs", reservoirs);
 			
-			log.info("RegionData[{}, {}] Saved.", this.regionPos.x, this.regionPos.z);
+			log.debug("RegionData[{}, {}] Saved.", this.regionPos.x, this.regionPos.z);
 			return nbt;
 		}
 		
@@ -237,13 +240,15 @@ public class ReservoirRegionDataStorage extends SavedData{
 						ResourceKey<Level> dimType = ResourceKey.create(Registry.DIMENSION_REGISTRY, rl);
 						ListTag islands = dim.getList("islands", Tag.TAG_COMPOUND);
 						
-						List<ReservoirIsland> list = islands.stream().map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt)).filter(o -> o != null).collect(Collectors.toList());
+						List<ReservoirIsland> list = islands.stream()
+								.map(inbt -> ReservoirIsland.readFromNBT((CompoundTag) inbt))
+								.filter(o -> o != null)
+								.collect(Collectors.toList());
+						list.forEach(island -> island.setRegion(this));
 						this.reservoirlist.putAll(dimType, list);
 					}
 				}
-				log.info("RegionData[{}, {}] Loaded.", this.regionPos.x, this.regionPos.z);
-			}else{
-				log.info("Nothing to load for [{}, {}].", this.regionPos.x, this.regionPos.z);
+				log.debug("RegionData[{}, {}] Loaded.", this.regionPos.x, this.regionPos.z);
 			}
 		}
 		
@@ -251,6 +256,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 			synchronized(this.reservoirlist){
 				for(ReservoirIsland island:this.reservoirlist.get(dimension)){
 					if(island.contains(pos)){
+						// There's no such thing as overlapping islands, so just return what was found directly
 						return island;
 					}
 				}
@@ -258,6 +264,9 @@ public class ReservoirRegionDataStorage extends SavedData{
 			}
 		}
 		
+		/**
+		 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
+		 */
 		public Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
 			return this.reservoirlist;
 		}
