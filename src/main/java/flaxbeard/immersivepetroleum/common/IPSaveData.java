@@ -40,8 +40,8 @@ public class IPSaveData extends SavedData{
 		
 		// TODO Backwards compability. Remove in 1.19.x!
 		ListTag reservoirs;
-		if(nbt.contains("reservoirs", Tag.TAG_COMPOUND) && (reservoirs = nbt.getList("reservoirs", Tag.TAG_COMPOUND)).isEmpty()){
-			ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
+		if(nbt.contains("reservoirs", Tag.TAG_LIST) && !(reservoirs = nbt.getList("reservoirs", Tag.TAG_COMPOUND)).isEmpty()){
+			final ReservoirRegionDataStorage storage = ReservoirRegionDataStorage.get();
 			
 			ImmersivePetroleum.log.debug("[ReservoirIslands]: Reading...");
 			for(int i = 0;i < reservoirs.size();i++){

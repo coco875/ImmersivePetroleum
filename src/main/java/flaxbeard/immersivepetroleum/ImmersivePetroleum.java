@@ -158,8 +158,8 @@ public class ImmersivePetroleum{
 	
 	public void worldLoad(WorldEvent.Load event){
 		if(!event.getWorld().isClientSide() && event.getWorld() instanceof ServerLevel world && world.dimension() == Level.OVERWORLD){
-			world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
 			ReservoirRegionDataStorage.init(world.getDataStorage());
+			world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
 		}
 	}
 	
