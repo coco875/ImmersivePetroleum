@@ -118,7 +118,7 @@ public class LubricatedHandler{
 			tag.putInt("x", this.pos.getX());
 			tag.putInt("y", this.pos.getY());
 			tag.putInt("z", this.pos.getZ());
-			tag.putString("world", this.world.getRegistryName().toString());
+			tag.putString("world", this.world.location().toString());
 			tag.putString("lubricant", this.lubricant.getRegistryName().toString());
 			
 			return tag;
