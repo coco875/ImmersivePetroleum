@@ -58,14 +58,14 @@ public class CommonEventHandler{
 	@SubscribeEvent
 	public void onSave(WorldEvent.Save event){
 		if(!event.getWorld().isClientSide()){
-			IPSaveData.markInstanceAsDirty();
+			IPSaveData.markDirty();
 		}
 	}
 	
 	@SubscribeEvent
 	public void onUnload(WorldEvent.Unload event){
 		if(!event.getWorld().isClientSide()){
-			IPSaveData.markInstanceAsDirty();
+			IPSaveData.markDirty();
 			ReservoirRegionDataStorage.get().markAllDirty();
 		}
 	}

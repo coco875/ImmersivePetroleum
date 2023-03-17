@@ -21,11 +21,15 @@ import net.minecraft.world.level.saveddata.SavedData;
 public class IPSaveData extends SavedData{
 	public static final String dataName = "ImmersivePetroleum-SaveData";
 	
+	private static IPSaveData INSTANCE;
+	
 	public IPSaveData(){
-		super();
+		INSTANCE = this;
 	}
 	
 	public IPSaveData(CompoundTag nbt){
+		INSTANCE = this;
+		
 		ListTag lubricatedList = nbt.getList("lubricated", Tag.TAG_COMPOUND);
 		LubricatedHandler.lubricatedTiles.clear();
 		for(int i = 0;i < lubricatedList.size();i++){
@@ -89,15 +93,9 @@ public class IPSaveData extends SavedData{
 		return nbt;
 	}
 	
-	private static IPSaveData INSTANCE;
-	
-	public static void markInstanceAsDirty(){
+	public static void markDirty(){
 		if(INSTANCE != null){
 			INSTANCE.setDirty();
 		}
-	}
-	
-	public static void setInstance(IPSaveData in){
-		INSTANCE = in;
 	}
 }
