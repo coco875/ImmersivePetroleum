@@ -38,8 +38,8 @@ import net.minecraft.world.level.storage.DimensionDataStorage;
 public class ReservoirRegionDataStorage extends SavedData{
 	private static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/RegionDataStorage");
 	
-	private static final String DATA_NAME = "ip-regions";
-	private static final String REGIONDATA_FOLDER = "ipregions\\";
+	private static final String DATA_NAME = "ImmersivePetroleum-ReservoirRegions";
+	private static final String REGIONDATA_FOLDER = "ImmersivePetroleum-ReservoirRegions\\";
 	
 	private static ReservoirRegionDataStorage active_instance;
 	public static ReservoirRegionDataStorage get(){
