@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
@@ -12,6 +13,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -44,8 +46,8 @@ public class ReservoirRegionDataStorage extends SavedData{
 		return active_instance;
 	}
 	
-	public static final void init(DimensionDataStorage dimData){
-		active_instance = dimData.computeIfAbsent(t -> load(dimData, t), () -> {
+	public static final void init(final DimensionDataStorage dimData){
+		active_instance = dimData.computeIfAbsent(t -> new ReservoirRegionDataStorage(dimData, t), () -> {
 			log.debug("Creating new ReservoirRegionDataStorage instance.");
 			return new ReservoirRegionDataStorage(dimData);
 		}, DATA_NAME);
@@ -53,17 +55,15 @@ public class ReservoirRegionDataStorage extends SavedData{
 	
 	// -----------------------------------------------------------------------------
 	
-	public static ReservoirRegionDataStorage load(DimensionDataStorage dimData, CompoundTag nbt){
-		ReservoirRegionDataStorage storage = new ReservoirRegionDataStorage(dimData);
-		storage.load(nbt);
-		return storage;
-	}
-	
 	/** Contains existing reservoir-region files */
 	final Map<ColumnPos, RegionData> regions = new HashMap<>();
 	final DimensionDataStorage dimData;
 	public ReservoirRegionDataStorage(DimensionDataStorage dimData){
 		this.dimData = dimData;
+	}
+	public ReservoirRegionDataStorage(DimensionDataStorage dimData, CompoundTag nbt){
+		this.dimData = dimData;
+		load(nbt);
 	}
 	
 	@Override
@@ -89,7 +89,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 			int z = tag.getInt("z");
 			
 			ColumnPos rPos = new ColumnPos(x, z);
-			RegionData rData = getOrCreateRegionDataFor(rPos);
+			RegionData rData = getOrCreateRegionData(rPos);
 			this.regions.put(rPos, rData);
 		}
 		
@@ -105,7 +105,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	public void addIsland(ResourceKey<Level> dimensionKey, ReservoirIsland island){
 		ColumnPos regionPos = toRegionCoords(island.getBoundingBox().getCenter());
 		
-		RegionData regionData = getOrCreateRegionDataFor(regionPos);
+		RegionData regionData = getOrCreateRegionData(regionPos);
 		synchronized(regionData.reservoirlist){
 			if(!regionData.reservoirlist.containsEntry(dimensionKey, island)){
 				regionData.reservoirlist.put(dimensionKey, island);
@@ -128,18 +128,57 @@ public class ReservoirRegionDataStorage extends SavedData{
 			return null;
 		}
 		
-		RegionData regionData = getRegionDataFor(toRegionCoords(pos));
-		return regionData != null ? regionData.get(world.dimension(), pos) : null;
+		final ResourceKey<Level> dimKey = world.dimension();
+		
+		ReservoirIsland ret = null;
+		if((ret = getIsland(dimKey, pos, 256, -256)) == null){
+			if((ret = getIsland(dimKey, pos, 256, 256)) == null){
+				if((ret = getIsland(dimKey, pos, -256, -256)) == null){
+					ret = getIsland(dimKey, pos, -256, 256);
+				}
+			}
+		}
+		
+		return ret;
 	}
 	
-	public boolean existsAt(final ColumnPos pos){
-		RegionData regionData = getRegionDataFor(toRegionCoords(pos));
+	private ReservoirIsland getIsland(ResourceKey<Level> dimKey, ColumnPos pos, int xOff, int zOff){
+		RegionData regionData = getRegionData(toRegionCoords(offset(pos, xOff, zOff)));
+		return regionData != null ? regionData.get(dimKey, pos) : null;
+	}
+	
+	private RegionData getRegionData(ColumnPos pos, int xOff, int zOff){
+		return getRegionData(toRegionCoords(offset(pos, xOff, zOff)));
+	}
+	
+	public boolean existsAt(ColumnPos pos){
+		RegionData topL = getRegionData(pos, 256, -256);
+		RegionData topR = getRegionData(pos, 256, 256);
+		RegionData bottomL = getRegionData(pos, -256, -256);
+		RegionData bottomR = getRegionData(pos, -256, 256);
+		
+		boolean ret = false;
+		if(!(ret = existsAt(topL, pos))){
+			if(!(ret = existsAt(topR, pos))){
+				if(!(ret = existsAt(bottomL, pos))){
+					ret = existsAt(bottomR, pos);
+				}
+			}
+		}
+		return ret;
+	}
+	
+	private boolean existsAt(RegionData regionData, ColumnPos pos){
 		if(regionData != null){
 			synchronized(regionData.reservoirlist){
 				return regionData.reservoirlist.values().stream().anyMatch(island -> island.contains(pos));
 			}
 		}
 		return false;
+	}
+	
+	private ColumnPos offset(ColumnPos in, int xOff, int zOff){
+		return new ColumnPos(in.x + xOff, in.z + zOff);
 	}
 	
 	/** Utility method */
@@ -155,17 +194,17 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	@Nullable
-	public RegionData getRegionDataFor(BlockPos pos){
-		return getRegionDataFor(toRegionCoords(pos));
+	public RegionData getRegionData(BlockPos pos){
+		return getRegionData(toRegionCoords(pos));
 	}
 	
 	@Nullable
-	public RegionData getRegionDataFor(ColumnPos regionPos){
+	public RegionData getRegionData(ColumnPos regionPos){
 		RegionData ret = this.regions.getOrDefault(regionPos, null);
 		return ret;
 	}
 	
-	private RegionData getOrCreateRegionDataFor(ColumnPos regionPos){
+	private RegionData getOrCreateRegionData(ColumnPos regionPos){
 		RegionData ret = this.regions.computeIfAbsent(regionPos, p -> {
 			String fn = getRegionFileName(p);
 			RegionData data = this.dimData.computeIfAbsent(t -> new RegionData(p, t), () -> new RegionData(p), fn);
@@ -188,8 +227,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	 * @author TwistedGate
 	 */
 	public static class RegionData extends SavedData{
-		/** The current region this is assigned to. (Can be used as a sanity-check if need be) */
-		public final ColumnPos regionPos;
+		final ColumnPos regionPos;
 		final Multimap<ResourceKey<Level>, ReservoirIsland> reservoirlist = ArrayListMultimap.create();
 		RegionData(ColumnPos regionPos){
 			this.regionPos = regionPos;
@@ -226,7 +264,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 			}
 			nbt.put("reservoirs", reservoirs);
 			
-			log.debug("RegionData[{}, {}] Saved.", this.regionPos.x, this.regionPos.z);
+			log.debug("{} Saved.", this);
 			return nbt;
 		}
 		
@@ -248,10 +286,23 @@ public class ReservoirRegionDataStorage extends SavedData{
 						this.reservoirlist.putAll(dimType, list);
 					}
 				}
-				log.debug("RegionData[{}, {}] Loaded.", this.regionPos.x, this.regionPos.z);
+				log.debug("{} Loaded.", this);
 			}
 		}
 		
+		/** Position of this RegionData instance. */
+		public ColumnPos position(){
+			return this.regionPos;
+		}
+		
+		/**
+		 * Attempts to find a reservoir.
+		 * 
+		 * @param dimension The world-dimension to look in.
+		 * @param pos The position of the possible reservoir.
+		 * @return a {@link ReservoirIsland} instance, or null if none was found at <code>pos</code>.
+		 */
+		@Nullable
 		public ReservoirIsland get(ResourceKey<Level> dimension, ColumnPos pos){
 			synchronized(this.reservoirlist){
 				for(ReservoirIsland island:this.reservoirlist.get(dimension)){
@@ -265,10 +316,34 @@ public class ReservoirRegionDataStorage extends SavedData{
 		}
 		
 		/**
-		 * @return {@link Multimap} of {@link ResourceKey<Level>}<{@link Level}>s to {@link ReservoirIsland}s
+		 * List of all reservoirs. (Read-Only)
+		 * 
+		 * @return {@link ImmutableMultimap}<{@link ResourceKey}<{@link Level}>, {@link ReservoirIsland}>
 		 */
 		public Multimap<ResourceKey<Level>, ReservoirIsland> getReservoirIslandList(){
-			return this.reservoirlist;
+			return ImmutableMultimap.copyOf(this.reservoirlist);
+		}
+		
+		@Override
+		public int hashCode(){
+			return Objects.hash(regionPos);
+		}
+		
+		@Override
+		public boolean equals(Object obj){
+			if(this == obj){
+				return true;
+			}
+			if(!(obj instanceof RegionData)){
+				return false;
+			}
+			RegionData other = (RegionData) obj;
+			return Objects.equals(this.regionPos, other.regionPos);
+		}
+		
+		@Override
+		public String toString(){
+			return String.format("RegionData[%d, %d]", this.regionPos.x, this.regionPos.z);
 		}
 	}
 }

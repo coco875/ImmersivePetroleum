@@ -325,7 +325,7 @@ public class DebugRenderHandler{
 						final List<ReservoirIsland> islands = new ArrayList<>();
 						for(int z = -1;z <= 1;z++){
 							for(int x = -1;x <= 1;x++){
-								RegionData rd = storage.getRegionDataFor(new ColumnPos(playerRegionPos.x + x, playerRegionPos.z + z));
+								RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x + x, playerRegionPos.z + z));
 								if(rd != null){
 									synchronized(rd.getReservoirIslandList()){
 										islands.addAll(rd.getReservoirIslandList().get(dimKey));

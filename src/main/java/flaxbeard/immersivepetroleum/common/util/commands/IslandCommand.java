@@ -78,7 +78,7 @@ public class IslandCommand{
 		final ResourceKey<Level> dimKey = source.getLevel().dimension();
 		for(int rz = -1;rz <= 1;rz++){
 			for(int rx = -1;rx <= 1;rx++){
-				RegionData rd = storage.getRegionDataFor(new ColumnPos(playerRegionPos.x + rx, playerRegionPos.z + rz));
+				RegionData rd = storage.getRegionData(new ColumnPos(playerRegionPos.x + rx, playerRegionPos.z + rz));
 				if(rd != null){
 					synchronized(rd.getReservoirIslandList()){
 						rd.getReservoirIslandList().get(dimKey).forEach(island -> {
