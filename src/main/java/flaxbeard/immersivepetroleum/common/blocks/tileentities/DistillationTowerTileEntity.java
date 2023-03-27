@@ -12,6 +12,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.google.common.collect.ImmutableSet;
 
 import blusunrize.immersiveengineering.api.IEEnums.IOSideConfig;
+import blusunrize.immersiveengineering.api.fluid.FluidUtils;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IBlockBounds;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IInteractionObjectIE;
@@ -204,7 +205,7 @@ public class DistillationTowerTileEntity extends PoweredMultiblockTileEntity<Dis
 						if(fs.getAmount() > 0){
 							ItemStack filledContainer = fillFluidContainer(outTank, fs, this.inventory.get(INV_2), this.inventory.get(INV_3));
 							if(!filledContainer.isEmpty()){
-								if(this.inventory.get(INV_3).getCount() == 1 && !Utils.isFluidContainerFull(filledContainer)){
+								if(this.inventory.get(INV_3).getCount() == 1 && !FluidUtils.isFluidContainerFull(filledContainer)){
 									this.inventory.set(INV_3, filledContainer.copy());
 								}else{
 									if(!this.inventory.get(INV_3).isEmpty() && ItemHandlerHelper.canItemStacksStack(this.inventory.get(INV_3), filledContainer)){
