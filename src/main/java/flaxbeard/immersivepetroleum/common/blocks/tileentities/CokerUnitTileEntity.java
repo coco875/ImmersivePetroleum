@@ -13,6 +13,8 @@ import com.mojang.datafixers.util.Pair;
 
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
+import blusunrize.immersiveengineering.api.wires.redstone.CapabilityRedstoneNetwork;
+import blusunrize.immersiveengineering.api.wires.redstone.CapabilityRedstoneNetwork.RedstoneBundleConnection;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
@@ -27,6 +29,7 @@ import flaxbeard.immersivepetroleum.common.IPMenuTypes;
 import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.CokerUnitMultiblock;
+import flaxbeard.immersivepetroleum.common.redstone.SimpleRedstoneBundleConnection;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
@@ -40,6 +43,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -129,6 +133,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
 		
+		this.interfaceOverride = nbt.getBoolean("interfaceOverride");
+		
 		this.bufferTanks[TANK_INPUT].readFromNBT(nbt.getCompound("tank0"));
 		this.bufferTanks[TANK_OUTPUT].readFromNBT(nbt.getCompound("tank1"));
 		
@@ -143,6 +149,8 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
+		
+		nbt.putBoolean("interfaceOverride", this.interfaceOverride);
 		
 		nbt.put("tank0", this.bufferTanks[TANK_INPUT].writeToNBT(new CompoundTag()));
 		nbt.put("tank1", this.bufferTanks[TANK_OUTPUT].writeToNBT(new CompoundTag()));
@@ -204,20 +212,149 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			this, be -> be.fluidInHandler, CokerUnitTileEntity::master,
 			registerFluidInput(this.bufferTanks[TANK_INPUT])
 	);
+	private final ResettableCapability<RedstoneBundleConnection> bundled_redstone = registerCapability(new SimpleRedstoneBundleConnection<>(this, getFacing().getOpposite()){
+		// TODO
+		// @formatter:off
+		// DyeColor.WHITE      = Disable machine.
+		// DyeColor.ORANGE     = Input Tank Level (0 - 15)
+		// DyeColor.MAGENTA    = Output Tank Level (0 - 15)
+		// DyeColor.LIGHT_BLUE = Unused
+		// DyeColor.YELLOW     = Chamber A and/or B have not enough Power.
+		// DyeColor.LIME       = Unused
+		// DyeColor.PINK       = Chamber-A State
+		// DyeColor.GRAY       = Chamber-A Progress (of current State)
+		// DyeColor.LIGHT_GRAY = Chamber-A has not enough Power
+		// DyeColor.CYAN       = Chamber-A has not enough Cleaning Fluid
+		// DyeColor.PURPLE     = Unused
+		// DyeColor.BLUE       = Chamber-B State
+		// DyeColor.BROWN      = Chamber-B Progress (of current State)
+		// DyeColor.GREEN      = Chamber-B has not enough Power
+		// DyeColor.RED        = Chamber-B has not enough Cleaning Fluid
+		// DyeColor.BLACK      = Unused
+		// @formatter:on
+		
+		@Override
+		public void onNetworkChange(){
+			boolean v = getInput(DyeColor.WHITE) > 0;
+			if(v != interfaceOverride){
+				interfaceOverride = v;
+				markDirty();
+			}
+		}
+		
+		@Override
+		public void updateNetworkInput(){
+			CokingChamber chamberA = this.getMaster().chambers[CHAMBER_A];
+			CokingChamber chamberB = this.getMaster().chambers[CHAMBER_B];
+			
+			fluidLevel(this.getMaster().bufferTanks[TANK_INPUT], DyeColor.ORANGE);
+			fluidLevel(this.getMaster().bufferTanks[TANK_OUTPUT], DyeColor.MAGENTA);
+			
+			boolean needsPower = false;
+			needsPower |= chamberOutputs(chamberA, DyeColor.PINK, DyeColor.GRAY, DyeColor.LIGHT_GRAY, DyeColor.CYAN);
+			needsPower |= chamberOutputs(chamberB, DyeColor.BLUE, DyeColor.BROWN, DyeColor.GREEN, DyeColor.RED);
+			if(needsPower){
+				setOutput(DyeColor.YELLOW, 15);
+			}
+			
+			markDirty();
+		}
+		
+		private boolean chamberOutputs(CokingChamber chamber, DyeColor... colors){
+			setOutput(colors[0], chamber.getState().id());
+			
+			boolean needsPower = false;
+			if(chamber.getRecipe() != null){
+				int progress = 0;
+				// TODO Convert to Switch-Statement
+				if(chamber.getState() == CokingState.PROCESSING && chamber.getTotalAmount() > 0){
+					progress = (int) Mth.clamp(15F * (chamber.getOutputAmount() / (float) chamber.getTotalAmount()), 0F, 15F);
+				}
+				if(chamber.getState() == CokingState.DRAIN_RESIDUE || chamber.getState() == CokingState.FLOODING){
+					FluidTank tank = chamber.getTank();
+					progress = (int) Mth.clamp(15F * (tank.getFluidAmount() / (float) tank.getCapacity()), 0F, 15F);
+					if(chamber.getState() == CokingState.DRAIN_RESIDUE)
+						progress = 15 - progress;
+				}
+				if(chamber.getState() == CokingState.DUMPING){
+					progress = (int) Mth.clamp(15F * (chamber.getTotalAmount() / (float) chamber.getCapacity()), 0F, 15F);
+				}
+				setOutput(colors[1], progress);
+				
+				if(chamberIsLackingPower(chamber)){
+					setOutput(colors[2], 15);
+					needsPower = true;
+				}
+				
+				if(chamberIsLackingFluid(chamber)){
+					setOutput(colors[3], 15);
+				}
+			}
+			return needsPower;
+		}
+		
+		private boolean fluidLevel(FluidTank tank, DyeColor signalColor){
+			if(setOutput(signalColor, (int) Mth.clamp(15F * (tank.getFluidAmount() / (float) tank.getCapacity()), 0F, 15F))){
+				return true;
+			}
+			return false;
+		}
+		
+		private boolean chamberIsLackingPower(CokingChamber chamber){
+			return this.getMaster().energyStorage.getEnergyStored() < (chamber.getRecipe().getTotalProcessEnergy() / chamber.getRecipe().getTotalProcessTime());
+		}
+		
+		private boolean chamberIsLackingFluid(CokingChamber chamber){
+			return this.getMaster().bufferTanks[TANK_INPUT].isEmpty() && chamber.getTank().getFluidAmount() < (chamber.getTotalAmount() * chamber.getRecipe().inputFluid.getAmount());
+		}
+	});
+	
+	/** Changed by the bundled-redstone interface */
+	private boolean interfaceOverride = false;
+	@Override
+	public boolean isRSDisabled(){
+		Set<BlockPos> rsPositions = getRedstonePos();
+		if(rsPositions == null || rsPositions.isEmpty())
+			return false;
+		
+		for(BlockPos rsPos:rsPositions){
+			CokerUnitTileEntity te = getEntityForPos(rsPos);
+			if(te != null){
+				// Sorted by "Priority"
+				if(te.computerControl.isAttached())
+					return !te.computerControl.isEnabled();
+				if(te.interfaceOverride)
+					return true;
+				if(redstoneControlInverted != te.isRSPowered())
+					return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	@Override
 	@Nonnull
-	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction facing){
-		if((facing == null || this.posInMultiblock.equals(Item_IN)) && capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
-			return this.insertionHandler.getAndCast();
-		}else if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			if(this.posInMultiblock.equals(Fluid_OUT) && (facing == null || facing == getFacing().getOpposite())){
+	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
+		if(capability == CapabilityItemHandler.ITEM_HANDLER_CAPABILITY){
+			if(this.posInMultiblock.equals(Item_IN) && (side == null || side == getFacing().getOpposite())){
+				return this.insertionHandler.getAndCast();
+			}
+		}
+		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
+			if(this.posInMultiblock.equals(Fluid_OUT) && (side == null || side == getFacing().getOpposite())){
 				return this.fluidOutHandler.getAndCast();
-			}else if(this.posInMultiblock.equals(Fluid_IN) && (facing == null || facing == getFacing().getOpposite())){
+			}
+			if(this.posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
 				return this.fluidInHandler.getAndCast();
 			}
 		}
-		return super.getCapability(capability, facing);
+		if(capability == CapabilityRedstoneNetwork.REDSTONE_BUNDLE_CONNECTION){
+			if(Redstone_IN.contains(this.posInMultiblock) && (side != null && side == getFacing().getOpposite())){
+				return this.bundled_redstone.cast();
+			}
+		}
+		return super.getCapability(capability, side);
 	}
 	
 	@Override
@@ -985,6 +1122,28 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			return nbt;
 		}
 		
+		private boolean setStage(CokingState state){
+			if(this.state != state){
+				this.state = state;
+				return true;
+			}
+			return false;
+		}
+		
+		/**
+		 * Advances the Timer. (Auto-Resets)
+		 * 
+		 * @param until reset point
+		 * @return true <i>once</i> when at the correct time, false otherwise
+		 */
+		private boolean advTimer(int until){
+			if(this.timer++ >= until){
+				this.timer = 0;
+				return true;
+			}
+			return false;
+		}
+		
 		/** Returns true when the recipe has been set, false if it already is set and the chamber is working */
 		public boolean setRecipe(@Nullable CokerUnitRecipe recipe){
 			if(state == CokingState.STANDBY){
@@ -1042,14 +1201,6 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			return this.timer;
 		}
 		
-		private boolean setStage(CokingState state){
-			if(this.state != state){
-				this.state = state;
-				return true;
-			}
-			return false;
-		}
-		
 		@Nullable
 		public CokerUnitRecipe getRecipe(){
 			return this.recipe;
@@ -1093,10 +1244,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 						if(cokerunit.energyStorage.getEnergyStored() >= this.recipe.getTotalProcessEnergy()/this.recipe.getTotalProcessTime()){
 							cokerunit.energyStorage.extractEnergy(this.recipe.getTotalProcessEnergy()/this.recipe.getTotalProcessTime(), false);
 							
-							this.timer++;
-							if(this.timer >= (this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())){
-								this.timer = 0;
-								
+							if(advTimer(this.recipe.getTotalProcessTime() * this.recipe.inputItem.getCount())){
 								this.tank.fill(Utils.copyFluidStackWithAmount(this.recipe.outputFluid.getMatchingFluidStacks().get(0), this.recipe.outputFluid.getAmount(), false), FluidAction.EXECUTE);
 								this.inputAmount--;
 								this.outputAmount++;
@@ -1129,10 +1277,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 					}
 				}
 				case FLOODING -> {
-					this.timer++;
-					if(this.timer >= 2){
-						this.timer = 0;
-						
+					if(advTimer(2)){
 						int max = getTotalAmount() * this.recipe.inputFluid.getAmount();
 						if(this.tank.getFluidAmount() < max){
 							FluidStack accepted = cokerunit.bufferTanks[TANK_INPUT].drain(this.recipe.inputFluid.getAmount(), FluidAction.SIMULATE);
@@ -1148,10 +1293,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				case DUMPING -> {
 					boolean update = false;
 					
-					this.timer++;
-					if(this.timer >= 5){ // Output speed will always be fixed
-						this.timer = 0;
-						
+					if(advTimer(5)){ // Output speed will always be fixed
 						if(this.outputAmount > 0){
 							Level world = cokerunit.getLevelNonnull();
 							int amount = Math.min(this.outputAmount, 1);

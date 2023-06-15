@@ -13,6 +13,7 @@ import com.mojang.datafixers.util.Pair;
 import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
+import blusunrize.immersiveengineering.api.wires.redstone.CapabilityRedstoneNetwork;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
@@ -30,6 +31,7 @@ import flaxbeard.immersivepetroleum.common.blocks.ticking.IPCommonTickableTile;
 import flaxbeard.immersivepetroleum.common.cfg.IPServerConfig;
 import flaxbeard.immersivepetroleum.common.gui.IPMenuProvider;
 import flaxbeard.immersivepetroleum.common.multiblocks.DerrickMultiblock;
+import flaxbeard.immersivepetroleum.common.redstone.SimpleRedstoneBundleConnection;
 import flaxbeard.immersivepetroleum.common.util.FluidHelper;
 import net.minecraft.ResourceLocationException;
 import net.minecraft.core.BlockPos;
@@ -40,8 +42,10 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
+import net.minecraft.util.Mth;
 import net.minecraft.world.ContainerHelper;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
@@ -118,6 +122,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	public void readCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.readCustomNBT(nbt, descPacket);
 		
+		this.interfaceOverride = nbt.getBoolean("interfaceOverride");
+		
 		this.drilling = nbt.getBoolean("drilling");
 		this.spilling = nbt.getBoolean("spilling");
 		this.clientFlow = nbt.getInt("flow");
@@ -144,6 +150,8 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Override
 	public void writeCustomNBT(CompoundTag nbt, boolean descPacket){
 		super.writeCustomNBT(nbt, descPacket);
+		
+		nbt.putBoolean("interfaceOverride", this.interfaceOverride);
 		
 		nbt.putBoolean("drilling", this.drilling);
 		nbt.putBoolean("spilling", this.spilling);
@@ -453,7 +461,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			WellTileEntity well = null;
 			
 			for(int y = getBlockPos().getY() - 1;y >= world.getMinBuildHeight();y--){
-				BlockPos current = new BlockPos(this.getBlockPos().getX(), y, this.getBlockPos().getZ());
+				BlockPos current = this.getBlockPos().atY(y);
 				BlockState state = world.getBlockState(current);
 				
 				if(state.getBlock() == IPContent.Blocks.WELL.get()){
@@ -497,7 +505,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			WellTileEntity well = null;
 			
 			for(int y = getBlockPos().getY() - 1;y >= world.getMinBuildHeight();y--){
-				BlockPos current = new BlockPos(this.getBlockPos().getX(), y, this.getBlockPos().getZ());
+				BlockPos current = this.getBlockPos().atY(y);
 				BlockState state = world.getBlockState(current);
 				
 				if(state.getBlock() == IPContent.Blocks.WELL.get()){
@@ -711,17 +719,129 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			this, be -> be.fluidInputHandler, DerrickTileEntity::master, registerFluidInput(tank)
 	);
 	private final ResettableCapability<IFluidHandler> dummyTank = registerFluidOutput(DUMMY_TANK);
+	private final ResettableCapability<SimpleRedstoneBundleConnection<DerrickTileEntity>> bundled_redstone = registerCapability(new SimpleRedstoneBundleConnection<>(this, (getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise()).getOpposite()){
+		// TODO
+		// @formatter:off
+		// DyeColor.WHITE      = Disable machine.
+		// DyeColor.ORANGE     = Drill progress. (Signal strength of 15 == DONE)
+		// DyeColor.MAGENTA    = Unused
+		// DyeColor.LIGHT_BLUE = Unused
+		// DyeColor.YELLOW     = Derrick has not enough Power.
+		// DyeColor.LIME       = Unused
+		// DyeColor.PINK       = Unused
+		// DyeColor.GRAY       = Derrick is missing Concrete.
+		// DyeColor.LIGHT_GRAY = Derrick is missing Pipes.
+		// DyeColor.CYAN       = Unused
+		// DyeColor.PURPLE     = Unused
+		// DyeColor.BLUE       = Derrick is missing Water.
+		// DyeColor.BROWN      = Unused
+		// DyeColor.GREEN      = Unused
+		// DyeColor.RED        = Derrick has detected a problem and wants a human to check it's GUI
+		// DyeColor.BLACK      = Derrick is Spilling.
+		// @formatter:on
+		
+		@Override
+		public void onNetworkChange(){
+			boolean v = getInput(DyeColor.WHITE) > 0;
+			if(v != interfaceOverride){
+				interfaceOverride = v;
+				markDirty();
+			}
+		}
+		
+		@Override
+		public void updateNetworkInput(){
+			WellTileEntity well = this.getMaster().getWell();
+			if(well == null)
+				return;
+			
+			boolean problemDetected = false;
+			
+			if(well.wellPipeLength < well.getMaxPipeLength()){
+				if(well.pipes <= 0 && this.getMaster().getInventory(Inventory.INPUT) == ItemStack.EMPTY){
+					setOutput(DyeColor.LIGHT_GRAY, 15);
+					problemDetected = true;
+				}
+				
+				if(this.getMaster().tank.isEmpty()){
+					int realPipeLength = (this.getMaster().getBlockPos().getY() - 1) - well.getBlockPos().getY();
+					if((DerrickTileEntity.CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength)) > 0){
+						setOutput(DyeColor.GRAY, 15);
+						problemDetected = true;
+					}else if((DerrickTileEntity.WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength)) > 0){
+						setOutput(DyeColor.BLUE, 15);
+						problemDetected = true;
+					}
+				}
+			}else{
+				if(this.getMaster().spilling){
+					setOutput(DyeColor.BLACK, 15);
+					problemDetected = true;
+				}
+			}
+			
+			if(well.wellPipeLength >= well.getMaxPipeLength()){
+				setOutput(DyeColor.ORANGE, 15);
+			}else{
+				int len = (int) Mth.clamp(15F * (well.wellPipeLength / (float) well.getMaxPipeLength()), 0F, 15F);
+				if(getOutput(DyeColor.ORANGE) > len){
+					setOutput(DyeColor.ORANGE, len);
+				}
+			}
+			
+			if(this.getMaster().energyStorage.getEnergyStored() < IPServerConfig.EXTRACTION.derrick_consumption.get()){
+				setOutput(DyeColor.YELLOW, 15);
+			}
+			
+			if(problemDetected){
+				setOutput(DyeColor.RED, 15);
+			}
+			
+			markDirty();
+		}
+	});
+	
+	/** Changed by the bundled-redstone interface */
+	private boolean interfaceOverride = false;
+	@Override
+	public boolean isRSDisabled(){
+		Set<BlockPos> rsPositions = getRedstonePos();
+		if(rsPositions == null || rsPositions.isEmpty())
+			return false;
+		
+		for(BlockPos rsPos:rsPositions){
+			DerrickTileEntity te = getEntityForPos(rsPos);
+			if(te != null){
+				// Sorted by "Priority"
+				if(te.computerControl.isAttached())
+					return !te.computerControl.isEnabled();
+				if(te.interfaceOverride)
+					return true;
+				if(redstoneControlInverted != te.isRSPowered())
+					return true;
+			}
+		}
+		
+		return false;
+	}
 	
 	@Nonnull
 	@Override
 	public <C> LazyOptional<C> getCapability(@Nonnull Capability<C> capability, @Nullable Direction side){
 		if(capability == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY){
-			if(posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
-				return fluidInputHandler.getAndCast();
+			if(this.posInMultiblock.equals(Fluid_IN) && (side == null || side == getFacing().getOpposite())){
+				return this.fluidInputHandler.getAndCast();
 			}
 			if(this.posInMultiblock.equals(Fluid_OUT)){
-				if(side == null || (getIsMirrored() ? side == getFacing().getCounterClockWise() : side == getFacing().getClockWise())){
-					return dummyTank.cast();
+				if(side == null || side == (getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise())){
+					return this.dummyTank.cast();
+				}
+			}
+		}
+		if(capability == CapabilityRedstoneNetwork.REDSTONE_BUNDLE_CONNECTION){
+			if(Redstone_IN.contains(this.posInMultiblock)){
+				if(side != null && side == (getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise()).getOpposite()){
+					return this.bundled_redstone.cast();
 				}
 			}
 		}
