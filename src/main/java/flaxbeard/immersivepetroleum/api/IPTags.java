@@ -36,6 +36,7 @@ public class IPTags{
 		public static final TagKey<Item> wax = createItemWrapper(ResourceUtils.forge("wax"));
 		public static final TagKey<Item> waxBlock = createItemWrapper(ResourceUtils.forge("storage_blocks/wax"));
 		public static final TagKey<Item> paraffinWaxBlock = createItemWrapper(ResourceUtils.forge("storage_blocks/wax/paraffin"));
+		public static final TagKey<Item> wool = createItemWrapper(ResourceUtils.mc("wool"));
 	}
 	
 	public static class Fluids{

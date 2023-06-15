@@ -26,11 +26,9 @@ import blusunrize.immersiveengineering.data.recipebuilder.FluidAwareShapedRecipe
 import flaxbeard.immersivepetroleum.api.IPTags;
 import flaxbeard.immersivepetroleum.api.crafting.builders.CokerUnitRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecipeBuilder;
-import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.HighPressureRefineryRecipeBuilder;
+import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
-import flaxbeard.immersivepetroleum.common.IPContent.Blocks;
-import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import me.desht.pneumaticcraft.common.core.ModFluids;
 import net.minecraft.data.DataGenerator;
@@ -86,6 +84,12 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("fuels/diesel_sulfur"));
 		GeneratorFuelBuilder.builder(IPTags.Fluids.kerosene, 208)
 			.build(this.out, rl("fuels/kerosene"));
+		
+		// Doesnt work, using instead..
+//		BottlingMachineRecipeBuilder.builder(IPContent.Items.GASOLINE_BOTTLE.get())
+//			.addInput(Items.GLASS_BOTTLE)
+//			.addFluidTag(IPTags.Fluids.gasoline, 250)
+//			.build(this.out, rl("bottling/molotov"));
 	}
 	
 	private void reservoirs(){
@@ -262,7 +266,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void speedboatUpgradeRecipes(){
-		ShapedRecipeBuilder.shaped(BoatUpgrades.REINFORCED_HULL.get())
+		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.REINFORCED_HULL.get())
 			.define('P', IETags.getTagsFor(EnumMetals.STEEL).plate)
 			.define('B', IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage))
 			.pattern("P P")
@@ -271,7 +275,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_steel_block", has(IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage)))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(BoatUpgrades.ICE_BREAKER.get())
+		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.ICE_BREAKER.get())
 			.define('P', IETags.getTagsFor(EnumMetals.STEEL).plate)
 			.define('I', IETags.getTagsFor(EnumMetals.STEEL).ingot)
 			.define('B', IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage))
@@ -282,7 +286,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_steel_block", has(IETags.getItemTag(IETags.getTagsFor(EnumMetals.STEEL).storage)))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(BoatUpgrades.TANK.get())
+		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.TANK.get())
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('T', IEBlocks.MetalDevices.BARREL)
 			.pattern(" P ")
@@ -291,7 +295,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(BoatUpgrades.RUDDERS.get())
+		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.RUDDERS.get())
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('R', IETags.ironRod)
 			.pattern(" RR")
@@ -300,7 +304,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_iron_rod", has(IETags.ironRod))
 			.save(this.out);
 		
-		ShapedRecipeBuilder.shaped(BoatUpgrades.PADDLES.get())
+		ShapedRecipeBuilder.shaped(IPContent.BoatUpgrades.PADDLES.get())
 			.define('P', IETags.getItemTag(IETags.treatedWood))
 			.define('S', IETags.treatedStick)
 			.pattern("S S")
@@ -311,7 +315,7 @@ public class IPRecipes extends RecipeProvider{
 	}
 	
 	private void blockRecipes(){
-		FluidAwareShapedRecipeBuilder.builder(Blocks.ASPHALT.get(), 8)
+		FluidAwareShapedRecipeBuilder.builder(IPContent.Blocks.ASPHALT.get(), 8)
 			.define('C', IPContent.Items.BITUMEN.get())
 			.define('S', Tags.Items.SAND)
 			.define('G', Tags.Items.GRAVEL)
@@ -322,7 +326,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
 			.save(this.out, rl("asphalt"));
 		
-		ShapedRecipeBuilder.shaped(Blocks.ASPHALT_STAIR.get(), 6)
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.ASPHALT_STAIR.get(), 6)
 			.define('A', IPTags.getItemTag(IPTags.Blocks.asphalt))
 			.pattern("A  ")
 			.pattern("AA ")
@@ -331,31 +335,31 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt_stair"));
 		
-		ShapedRecipeBuilder.shaped(Blocks.ASPHALT_SLAB.get(), 6)
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.ASPHALT_SLAB.get(), 6)
 			.define('A', IPTags.getItemTag(IPTags.Blocks.asphalt))
 			.pattern("AAA")
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
 			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt_slab"));
 		
-		FluidAwareShapedRecipeBuilder.builder(Blocks.ASPHALT.get(), 1)
-			.define('S', Blocks.ASPHALT_SLAB.get())
+		FluidAwareShapedRecipeBuilder.builder(IPContent.Blocks.ASPHALT.get(), 1)
+			.define('S', IPContent.Blocks.ASPHALT_SLAB.get())
 			.pattern("S")
 			.pattern("S")
 			.unlockedBy("has_bitumen", has(IPContent.Items.BITUMEN.get()))
 			.unlockedBy("has_slag", has(IEItems.Ingredients.SLAG))
 			.save(this.out, rl("asphalt"));
 		
-		SingleItemRecipeBuilder.stonecutting(Ingredient.of(Blocks.ASPHALT.get()), Blocks.ASPHALT_SLAB.get(), 2)
-			.unlockedBy("has_asphalt", has(Blocks.ASPHALT.get()))
+		SingleItemRecipeBuilder.stonecutting(Ingredient.of(IPContent.Blocks.ASPHALT.get()), IPContent.Blocks.ASPHALT_SLAB.get(), 2)
+			.unlockedBy("has_asphalt", has(IPContent.Blocks.ASPHALT.get()))
 			.save(this.out, "asphalt_slab_from_asphalt_stonecutting");
 		
-		SingleItemRecipeBuilder.stonecutting(Ingredient.of(Blocks.ASPHALT.get()), Blocks.ASPHALT_STAIR.get())
-			.unlockedBy("has_asphalt", has(Blocks.ASPHALT.get()))
+		SingleItemRecipeBuilder.stonecutting(Ingredient.of(IPContent.Blocks.ASPHALT.get()), IPContent.Blocks.ASPHALT_STAIR.get())
+			.unlockedBy("has_asphalt", has(IPContent.Blocks.ASPHALT.get()))
 			.save(this.out, "asphalt_stairs_from_asphalt_stonecutting");
 		
 		
-		ShapedRecipeBuilder.shaped(Blocks.GAS_GENERATOR.get())
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.GAS_GENERATOR.get())
 			.define('P', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('G', MetalDecoration.GENERATOR)
 			.define('C', IEBlocks.MetalDevices.CAPACITOR_LV)
@@ -367,7 +371,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(MetalDecoration.GENERATOR), has(MetalDecoration.GENERATOR))
 			.save(this.out, rl("gas_generator"));
 		
-		ShapedRecipeBuilder.shaped(Blocks.AUTO_LUBRICATOR.get())
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.AUTO_LUBRICATOR.get())
 			.define('G', Tags.Items.GLASS)
 			.define('T', IETags.getItemTag(IETags.treatedWood))
 			.define('P', IEBlocks.MetalDevices.FLUID_PIPE)
@@ -378,7 +382,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(IEBlocks.MetalDevices.FLUID_PIPE), has(IEBlocks.MetalDevices.FLUID_PIPE))
 			.save(this.out, rl("auto_lubricator"));
 		
-		ShapedRecipeBuilder.shaped(Blocks.FLARESTACK.get())
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.FLARESTACK.get())
 			.define('I', IETags.getTagsFor(EnumMetals.IRON).plate)
 			.define('C', IEItems.Ingredients.COMPONENT_STEEL)
 			.define('P', IEBlocks.MetalDevices.FLUID_PIPE)
@@ -391,7 +395,7 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_"+toPath(IEBlocks.MetalDevices.FLUID_PIPE), has(IEBlocks.MetalDevices.FLUID_PIPE))
 			.save(this.out, rl("flarestack"));
 		
-		ShapedRecipeBuilder.shaped(Blocks.SEISMIC_SURVEY.get())
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.SEISMIC_SURVEY.get())
 			.pattern("SBH")
 			.pattern("SBS")
 			.pattern("MLM")
@@ -413,7 +417,7 @@ public class IPRecipes extends RecipeProvider{
 			.pattern("PBP")
 			.unlockedBy("has_rose_red", has(Items.RED_DYE))
 			.unlockedBy("has_iron_plate", has(IETags.getTagsFor(EnumMetals.IRON).plate))
-			.save(out);
+			.save(this.out);
 		
 		ShapedRecipeBuilder.shaped(IPContent.Items.PROJECTOR.get())
 			.define('I', Tags.Items.INGOTS_IRON)
@@ -425,7 +429,7 @@ public class IPRecipes extends RecipeProvider{
 			.pattern(" IW")
 			.unlockedBy("has_iron_ingot", has(Items.IRON_INGOT))
 			.unlockedBy("has_treated_planks", has(IETags.getItemTag(IETags.treatedWood)))
-			.save(out);
+			.save(this.out);
 		
 		ShapedRecipeBuilder.shaped(IPContent.Items.SPEEDBOAT.get())
 			.define('P', IETags.getItemTag(IETags.treatedWood))
@@ -446,11 +450,37 @@ public class IPRecipes extends RecipeProvider{
 			.define('p', IEBlocks.MetalDevices.FLUID_PIPE)
 			.unlockedBy("has_drill", has(IEItems.Tools.DRILL))
 			.save(out, rl(toPath(IEItems.Misc.TOOL_UPGRADES.get(ToolUpgradeItem.ToolUpgrade.DRILL_LUBE))));
+		
+		ShapedRecipeBuilder.shaped(IPContent.Items.MOLOTOV.get())
+			.pattern("W")
+			.pattern("M")
+			.define('M', IPContent.Items.GASOLINE_BOTTLE.get())
+			.define('W', IPTags.Items.wool)
+			.unlockedBy("has_gasoline_bottle", has(IPContent.Items.GASOLINE_BOTTLE.get()))
+			.save(this.out, rl("molotov_wool"));
+		
+		ShapedRecipeBuilder.shaped(IPContent.Items.MOLOTOV.get())
+			.pattern("F")
+			.pattern("M")
+			.define('M', IPContent.Items.GASOLINE_BOTTLE.get())
+			.define('F', IETags.fabricHemp)
+			.unlockedBy("has_gasoline_bottle", has(IPContent.Items.GASOLINE_BOTTLE.get()))
+			.save(this.out, rl("molotov_fabric"));
+		
+		ShapedRecipeBuilder.shaped(IPContent.Items.GASOLINE_BOTTLE.get(), 4)
+			.pattern(" G")
+			.pattern("BB")
+			.pattern("BB")
+			.define('G', IPContent.Fluids.GASOLINE.bucket().get())
+			.define('B', Items.GLASS_BOTTLE)
+			.unlockedBy("has_gasoline_bucket", has(IPContent.Fluids.GASOLINE.bucket().get()))
+			.unlockedBy("has_glass_bottle", has(Items.GLASS_BOTTLE))
+			.save(this.out);
 	}
 	
 	private void paraffinWaxRecipes(){
 		// Paraffin Wax Compression and Decompression
-		ShapedRecipeBuilder.shaped(Blocks.PARAFFIN_WAX.get())
+		ShapedRecipeBuilder.shaped(IPContent.Blocks.PARAFFIN_WAX.get())
 			.define('c', IPTags.Items.paraffinWax)
 			.pattern("ccc")
 			.pattern("ccc")

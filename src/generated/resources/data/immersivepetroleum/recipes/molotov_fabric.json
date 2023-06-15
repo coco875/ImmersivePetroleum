@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "F",
+    "M"
+  ],
+  "key": {
+    "M": {
+      "item": "immersivepetroleum:gasoline_bottle"
+    },
+    "F": {
+      "tag": "forge:fabric_hemp"
+    }
+  },
+  "result": {
+    "item": "immersivepetroleum:molotov"
+  }
+}

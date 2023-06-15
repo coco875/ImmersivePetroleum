@@ -20,6 +20,7 @@ import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.client.model.generators.loaders.DynamicBucketModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.RegistryObject;
 
 public class IPItemModels extends ModelProvider<TRSRModelBuilder>{
 	public IPItemModels(DataGenerator gen, ExistingFileHelper exHelper){
@@ -40,20 +41,24 @@ public class IPItemModels extends ModelProvider<TRSRModelBuilder>{
 			.parent(getExistingFile(mcLoc("item/generated")))
 			.texture("layer0", modLoc("item/schematic"));
 		
-		genericItem(IPContent.Items.BITUMEN.get());
-		genericItem(IPContent.Items.PETCOKE.get());
-		genericItem(IPContent.Items.PETCOKEDUST.get());
-		genericItem(IPContent.Items.OIL_CAN.get());
-		genericItem(IPContent.Items.SPEEDBOAT.get());
-		genericItem(IPContent.Items.PARAFFIN_WAX.get());
+		genericItem(IPContent.Items.BITUMEN);
+		genericItem(IPContent.Items.PETCOKE);
+		genericItem(IPContent.Items.PETCOKEDUST);
+		genericItem(IPContent.Items.OIL_CAN);
+		genericItem(IPContent.Items.SPEEDBOAT);
+		genericItem(IPContent.Items.PARAFFIN_WAX);
 		
-		genericItem(IPContent.BoatUpgrades.ICE_BREAKER.get());
-		genericItem(IPContent.BoatUpgrades.REINFORCED_HULL.get());
-		genericItem(IPContent.BoatUpgrades.PADDLES.get());
-		genericItem(IPContent.BoatUpgrades.RUDDERS.get());
-		genericItem(IPContent.BoatUpgrades.TANK.get());
+		genericItem(IPContent.BoatUpgrades.ICE_BREAKER);
+		genericItem(IPContent.BoatUpgrades.REINFORCED_HULL);
+		genericItem(IPContent.BoatUpgrades.PADDLES);
+		genericItem(IPContent.BoatUpgrades.RUDDERS);
+		genericItem(IPContent.BoatUpgrades.TANK);
 		
-		genericItem(IPContent.Items.SURVEYRESULT.get());
+		genericItem(IPContent.Items.SURVEYRESULT);
+		
+		genericItem(IPContent.Items.GASOLINE_BOTTLE);
+		genericItem(IPContent.Items.MOLOTOV);
+		genericItem(IPContent.Items.MOLOTOV_LIT);
 		
 		projectorItem();
 		generatorItem();
@@ -261,6 +266,10 @@ public class IPItemModels extends ModelProvider<TRSRModelBuilder>{
 		return getBuilder(item.asItem().getRegistryName().toString())
 				.customLoader(IEOBJBuilder::begin)
 				.modelLocation(modLoc("models/" + model));
+	}
+	
+	private <I extends Item> void genericItem(RegistryObject<I> regObject){
+		genericItem(regObject.get());
 	}
 	
 	private void genericItem(Item item){

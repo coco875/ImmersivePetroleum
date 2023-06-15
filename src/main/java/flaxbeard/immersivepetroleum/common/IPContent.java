@@ -40,6 +40,7 @@ import flaxbeard.immersivepetroleum.common.blocks.stone.WellPipeBlock;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.PumpjackTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.wooden.AutoLubricatorBlock;
 import flaxbeard.immersivepetroleum.common.crafting.Serializers;
+import flaxbeard.immersivepetroleum.common.entity.MolotovItemEntity;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.fluids.CrudeOilFluid;
 import flaxbeard.immersivepetroleum.common.fluids.DieselFluid;
@@ -47,8 +48,10 @@ import flaxbeard.immersivepetroleum.common.fluids.IPFluid;
 import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidEntry;
 import flaxbeard.immersivepetroleum.common.fluids.NapalmFluid;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
+import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
 import flaxbeard.immersivepetroleum.common.items.IPItemBase;
 import flaxbeard.immersivepetroleum.common.items.IPUpgradeItem;
+import flaxbeard.immersivepetroleum.common.items.MolotovItem;
 import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.items.OilCanItem;
 import flaxbeard.immersivepetroleum.common.items.ProjectorItem;
@@ -179,6 +182,11 @@ public class IPContent{
 				return 800;
 			}
 		});
+		
+		public static final RegistryObject<Item> GASOLINE_BOTTLE = IPRegisters.registerItem("gasoline_bottle", GasolineBottleItem::new);
+		public static final RegistryObject<Item> MOLOTOV = IPRegisters.registerItem("molotov", () -> new MolotovItem(false));
+		public static final RegistryObject<Item> MOLOTOV_LIT = IPRegisters.registerItem("molotov_lit", () -> new MolotovItem(true));
+		
 		private static void forceClassLoad(){
 		}
 	}
@@ -260,6 +268,7 @@ public class IPContent{
 	public static void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event){
 		try{
 			event.getRegistry().register(MotorboatEntity.TYPE);
+			event.getRegistry().register(MolotovItemEntity.TYPE);
 		}catch(Throwable e){
 			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
 			throw e;
