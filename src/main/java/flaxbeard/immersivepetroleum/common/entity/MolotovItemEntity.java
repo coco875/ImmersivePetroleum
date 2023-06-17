@@ -23,7 +23,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 
 public class MolotovItemEntity extends ThrowableItemProjectile{
-	
 	public static final EntityType<MolotovItemEntity> TYPE = createType();
 	
 	private static EntityType<MolotovItemEntity> createType(){
@@ -44,12 +43,12 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 		this.zo = z;
 	}
 	
-	public MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world){
+	private MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world){
 		super(type, world);
 		this.blocksBuilding = true;
 	}
 	
-	public MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world, LivingEntity living){
+	private MolotovItemEntity(EntityType<MolotovItemEntity> type, Level world, LivingEntity living){
 		super(type, living, world);
 		this.blocksBuilding = true;
 	}
