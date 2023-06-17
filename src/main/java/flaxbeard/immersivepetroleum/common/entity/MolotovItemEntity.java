@@ -7,6 +7,8 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
@@ -85,9 +87,18 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 	}
 	
 	private void fire(BlockPos pos){
+		if(this.level.getBlockState(pos).getMaterial().isLiquid()){
+			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+			return;
+		}
+		
+		this.level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 0.3F, 0.7F);
 		Set<BlockPos> hits = new HashSet<>();
 		place(pos, hits, 0, 9);
+		if(hits.isEmpty())
+			return;
 		hits.forEach(this::placeFire);
+        this.level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0F, 1.0F);
 	}
 	
 	private void place(BlockPos pos, Set<BlockPos> visited, int cur, int max){

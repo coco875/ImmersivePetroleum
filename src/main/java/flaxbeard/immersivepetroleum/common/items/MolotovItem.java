@@ -64,7 +64,7 @@ public class MolotovItem extends IPItemBase{
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand){
 		if(this.isLit && pPlayer.getItemInHand(InteractionHand.OFF_HAND).getItem() != Items.FLINT_AND_STEEL){
 			ItemStack stack = pPlayer.getItemInHand(pUsedHand);
-			pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.SNOWBALL_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
+			pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
 			if(!pLevel.isClientSide){
 				MolotovItemEntity entity = new MolotovItemEntity(pLevel, pPlayer);
 				entity.setItem(stack);
