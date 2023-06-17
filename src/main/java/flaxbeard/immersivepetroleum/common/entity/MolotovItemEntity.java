@@ -124,8 +124,11 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 		
 		BlockState fire = Blocks.FIRE.defaultBlockState();
 		
-		boolean up = false, north = false, east = false, south = false,
-				west = false;
+		boolean up = false;
+		boolean north = false;
+		boolean east = false;
+		boolean south = false;
+		boolean west = false;
 		if(this.level.getBlockState(pos.below()).isAir()){
 			BlockPos abovePos = pos.above();
 			BlockPos northPos = pos.north();
