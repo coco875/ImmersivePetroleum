@@ -31,6 +31,7 @@ import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import me.desht.pneumaticcraft.common.core.ModFluids;
+import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;
@@ -84,12 +85,6 @@ public class IPRecipes extends RecipeProvider{
 			.build(this.out, rl("fuels/diesel_sulfur"));
 		GeneratorFuelBuilder.builder(IPTags.Fluids.kerosene, 208)
 			.build(this.out, rl("fuels/kerosene"));
-		
-		// Doesnt work, using instead..
-//		BottlingMachineRecipeBuilder.builder(IPContent.Items.GASOLINE_BOTTLE.get())
-//			.addInput(Items.GLASS_BOTTLE)
-//			.addFluidTag(IPTags.Fluids.gasoline, 250)
-//			.build(this.out, rl("bottling/molotov"));
 	}
 	
 	private void reservoirs(){
@@ -474,7 +469,7 @@ public class IPRecipes extends RecipeProvider{
 			.define('G', IPContent.Fluids.GASOLINE.bucket().get())
 			.define('B', Items.GLASS_BOTTLE)
 			.unlockedBy("has_gasoline_bucket", has(IPContent.Fluids.GASOLINE.bucket().get()))
-			.unlockedBy("has_glass_bottle", has(Items.GLASS_BOTTLE))
+			.unlockedBy("has_glass_bottle", has(MinMaxBounds.Ints.atLeast(4), Items.GLASS_BOTTLE))
 			.save(this.out);
 	}
 	
