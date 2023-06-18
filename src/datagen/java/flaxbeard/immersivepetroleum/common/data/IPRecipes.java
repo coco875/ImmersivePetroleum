@@ -32,7 +32,6 @@ import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import me.desht.pneumaticcraft.common.core.ModFluids;
-import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.data.recipes.RecipeProvider;

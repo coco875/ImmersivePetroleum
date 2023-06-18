@@ -1,6 +1,7 @@
 package flaxbeard.immersivepetroleum.common.entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
@@ -10,18 +11,22 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ThrowableItemProjectile;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class MolotovItemEntity extends ThrowableItemProjectile{
 	public static final EntityType<MolotovItemEntity> TYPE = createType();
@@ -114,6 +119,20 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 		hits.forEach(this::placeFire);
 		
 		this.level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0F, 1.0F);
+		
+		AABB bounds = AABB.ofSize(new Vec3(pos.getX(), pos.getY(), pos.getZ()), 6.5, 6.5, 6.5);
+		List<LivingEntity> list = this.level.getEntitiesOfClass(LivingEntity.class, bounds);
+		if(list.isEmpty())
+			return;
+		
+		if(getOwner() instanceof Player player){
+			final DamageSource src = DamageSource.playerAttack(player);
+			list.forEach(e -> e.hurt(src, 1.0F));
+		}
+		
+		if(getOwner() instanceof LivingEntity living){
+			living.setLastHurtMob(list.get(list.size() - 1));
+		}
 	}
 	
 	private void scanArea(BlockPos start, BlockPos pos, Set<BlockPos> visited, int radiusSqr){
