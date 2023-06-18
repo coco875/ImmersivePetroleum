@@ -60,6 +60,19 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 	}
 	
 	@Override
+	public void tick(){
+		super.tick();
+		
+		if(this.level.isClientSide){
+			double m = 0.125;
+			double x = getX() + (m - m * 2 * this.random.nextDouble());
+			double y = getY() + (m - m * 2 * this.random.nextDouble());
+			double z = getZ() + (m - m * 2 * this.random.nextDouble());
+			this.level.addParticle(ParticleTypes.FLAME, x, y, z, 0, 0, 0);
+		}
+	}
+	
+	@Override
 	protected void onHit(HitResult pResult){
 		super.onHit(pResult);
 		if(!this.level.isClientSide){
