@@ -64,14 +64,16 @@ public class MolotovItem extends IPItemBase{
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand){
 		if(this.isLit && pPlayer.getItemInHand(InteractionHand.OFF_HAND).getItem() != Items.FLINT_AND_STEEL){
 			ItemStack stack = pPlayer.getItemInHand(pUsedHand);
-			pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
-			if(!pLevel.isClientSide){
-				MolotovItemEntity entity = new MolotovItemEntity(pLevel, pPlayer);
-				entity.setItem(stack);
-				entity.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0F, 0.75F, 1.0F);
-				pLevel.addFreshEntity(entity);
+			if(stack.isDamaged()){
+				pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
+				if(!pLevel.isClientSide){
+					MolotovItemEntity entity = new MolotovItemEntity(pLevel, pPlayer);
+					entity.setItem(stack);
+					entity.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0F, 0.75F, 1.0F);
+					pLevel.addFreshEntity(entity);
+				}
+				stack.shrink(1);
 			}
-			stack.shrink(1);
 			
 			return InteractionResultHolder.sidedSuccess(stack, pLevel.isClientSide());
 		}else{
@@ -100,7 +102,6 @@ public class MolotovItem extends IPItemBase{
 				
 				ItemStack lit = new ItemStack(IPContent.Items.MOLOTOV_LIT.get(), 1);
 				lit.getOrCreateTag().putLong("lit_time", pLevel.getGameTime() - 1);
-//				player.addItem(lit);
 				return lit;
 			}
 		}
