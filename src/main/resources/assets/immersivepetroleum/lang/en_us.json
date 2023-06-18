@@ -49,6 +49,9 @@
 	"item.immersivepetroleum.speedboat": "Motorboat",
 	"item.immersivepetroleum.oil_can": "Lubricant Can",
 	"item.immersivepetroleum.survey_result": "Survey Result",
+	"item.immersivepetroleum.gasoline_bottle":"Gasoline Bottle",
+	"item.immersivepetroleum.molotov":"Molotov",
+	"item.immersivepetroleum.molotov_lit":"Molotov Lit",
 	
 	"item.immersivepetroleum.bitumen": "Bitumen",
 	"item.immersivepetroleum.petcoke": "Petcoke",
