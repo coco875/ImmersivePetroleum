@@ -10,6 +10,7 @@ import blusunrize.immersiveengineering.api.crafting.FluidTagInput;
 import blusunrize.immersiveengineering.api.crafting.IngredientWithSize;
 import blusunrize.immersiveengineering.api.crafting.builders.ArcFurnaceRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.BlastFurnaceFuelBuilder;
+import blusunrize.immersiveengineering.api.crafting.builders.BottlingMachineRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.CrusherRecipeBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.GeneratorFuelBuilder;
 import blusunrize.immersiveengineering.api.crafting.builders.MixerRecipeBuilder;
@@ -462,15 +463,10 @@ public class IPRecipes extends RecipeProvider{
 			.unlockedBy("has_gasoline_bottle", has(IPContent.Items.GASOLINE_BOTTLE.get()))
 			.save(this.out, rl("molotov_fabric"));
 		
-		ShapedRecipeBuilder.shaped(IPContent.Items.GASOLINE_BOTTLE.get(), 4)
-			.pattern(" G")
-			.pattern("BB")
-			.pattern("BB")
-			.define('G', IPContent.Fluids.GASOLINE.bucket().get())
-			.define('B', Items.GLASS_BOTTLE)
-			.unlockedBy("has_gasoline_bucket", has(IPContent.Fluids.GASOLINE.bucket().get()))
-			.unlockedBy("has_glass_bottle", has(MinMaxBounds.Ints.atLeast(4), Items.GLASS_BOTTLE))
-			.save(this.out);
+		BottlingMachineRecipeBuilder.builder(IPContent.Items.GASOLINE_BOTTLE.get())
+			.addFluidTag(IPTags.Fluids.gasoline, 250)
+			.addInput(Items.GLASS_BOTTLE)
+			.build(this.out, rl("bottling/gasoline_bottle"));
 	}
 	
 	private void paraffinWaxRecipes(){

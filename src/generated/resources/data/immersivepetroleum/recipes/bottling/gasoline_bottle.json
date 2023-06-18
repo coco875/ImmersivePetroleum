@@ -1,0 +1,15 @@
+{
+  "type": "immersiveengineering:bottling_machine",
+  "results": [
+    {
+      "item": "immersivepetroleum:gasoline_bottle"
+    }
+  ],
+  "fluid": {
+    "tag": "forge:gasoline",
+    "amount": 250
+  },
+  "input": {
+    "item": "minecraft:glass_bottle"
+  }
+}
