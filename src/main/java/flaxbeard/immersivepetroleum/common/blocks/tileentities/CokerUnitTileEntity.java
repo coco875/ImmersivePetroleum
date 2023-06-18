@@ -265,19 +265,30 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			
 			boolean needsPower = false;
 			if(chamber.getRecipe() != null){
-				int progress = 0;
 				// TODO Convert to Switch-Statement
-				if(chamber.getState() == CokingState.PROCESSING && chamber.getTotalAmount() > 0){
-					progress = (int) Mth.clamp(15F * (chamber.getOutputAmount() / (float) chamber.getTotalAmount()), 0F, 15F);
-				}
-				if(chamber.getState() == CokingState.DRAIN_RESIDUE || chamber.getState() == CokingState.FLOODING){
-					FluidTank tank = chamber.getTank();
-					progress = (int) Mth.clamp(15F * (tank.getFluidAmount() / (float) tank.getCapacity()), 0F, 15F);
-					if(chamber.getState() == CokingState.DRAIN_RESIDUE)
-						progress = 15 - progress;
-				}
-				if(chamber.getState() == CokingState.DUMPING){
-					progress = (int) Mth.clamp(15F * (chamber.getTotalAmount() / (float) chamber.getCapacity()), 0F, 15F);
+				int progress = 0;
+				switch(chamber.getState()){
+					case PROCESSING:{
+						if(chamber.getTotalAmount() > 0){
+							progress = (int) Mth.clamp(15F * (chamber.getOutputAmount() / (float) chamber.getTotalAmount()), 0F, 15F);
+						}
+						break;
+					}
+					case DRAIN_RESIDUE:
+					case FLOODING:{
+						FluidTank tank = chamber.getTank();
+						progress = (int) Mth.clamp(15F * (tank.getFluidAmount() / (float) tank.getCapacity()), 0F, 15F);
+						if(chamber.getState() == CokingState.DRAIN_RESIDUE){
+							progress = 15 - progress;
+						}
+						break;
+					}
+					case DUMPING:{
+						progress = (int) Mth.clamp(15F * (chamber.getTotalAmount() / (float) chamber.getCapacity()), 0F, 15F);
+						break;
+					}
+					default:
+						break;
 				}
 				setOutput(colors[1], progress);
 				
