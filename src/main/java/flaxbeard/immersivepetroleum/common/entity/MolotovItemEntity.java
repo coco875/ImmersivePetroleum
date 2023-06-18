@@ -7,6 +7,7 @@ import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.IPContent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.EntityType;
@@ -87,34 +88,38 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 	
 	private void fire(BlockPos pos){
 		if(this.level.getBlockState(pos).getMaterial().isLiquid()){
-			level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, level.getRandom().nextFloat() * 0.4F + 0.8F);
+			this.level.playSound(null, pos, SoundEvents.FIRE_EXTINGUISH, SoundSource.BLOCKS, 1.0F, this.level.getRandom().nextFloat() * 0.4F + 0.8F);
 			return;
 		}
 		
 		this.level.playSound(null, pos, SoundEvents.GLASS_BREAK, SoundSource.BLOCKS, 0.3F, 0.7F);
+		
 		Set<BlockPos> hits = new HashSet<>();
-		place(pos, hits, 0, 9);
+		scanArea(pos, pos, hits, 9);
 		if(hits.isEmpty())
 			return;
 		hits.forEach(this::placeFire);
-        this.level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0F, 1.0F);
+		
+		this.level.playSound(null, pos, SoundEvents.BOTTLE_EMPTY, SoundSource.NEUTRAL, 1.0F, 1.0F);
 	}
 	
-	private void place(BlockPos pos, Set<BlockPos> visited, int cur, int max){
-		if(cur >= max)
+	private void scanArea(BlockPos start, BlockPos pos, Set<BlockPos> visited, int radiusSqr){
+		BlockPos dif = pos.subtract(start);
+		int sqr = dif.getX() * dif.getX() + dif.getY() * dif.getY() + dif.getZ() * dif.getZ();
+		if(sqr > radiusSqr)
+			return;
+		if(pos != start && !this.level.getBlockState(pos).isAir())
 			return;
 		if(visited.contains(pos))
 			return;
-		if(cur > 0 && !this.level.getBlockState(pos).isAir())
-			return;
 		
 		visited.add(pos);
-		place(pos.above(), visited, cur + 1, max);
-		place(pos.below(), visited, cur + 1, max);
-		place(pos.north(), visited, cur + 1, max);
-		place(pos.east(), visited, cur + 1, max);
-		place(pos.south(), visited, cur + 1, max);
-		place(pos.west(), visited, cur + 1, max);
+		scanArea(start, pos.above(), visited, radiusSqr);
+		scanArea(start, pos.below(), visited, radiusSqr);
+		scanArea(start, pos.north(), visited, radiusSqr);
+		scanArea(start, pos.east(), visited, radiusSqr);
+		scanArea(start, pos.south(), visited, radiusSqr);
+		scanArea(start, pos.west(), visited, radiusSqr);
 	}
 	
 	private void placeFire(BlockPos pos){
