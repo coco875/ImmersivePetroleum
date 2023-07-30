@@ -184,6 +184,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public void doGraphicalUpdates(){
 		updateMasterBlock(null, true);
+		this.bundled_redstone.ifPresent(r -> r.markDirty());
 	}
 	
 	@Override
@@ -212,7 +213,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			this, be -> be.fluidInHandler, CokerUnitTileEntity::master,
 			registerFluidInput(this.bufferTanks[TANK_INPUT])
 	);
-	private final ResettableCapability<RedstoneBundleConnection> bundled_redstone = registerCapability(new SimpleRedstoneBundleConnection<>(this, getFacing().getOpposite()){
+	private final LazyOptional<RedstoneBundleConnection> bundled_redstone = LazyOptional.of(() -> new SimpleRedstoneBundleConnection<>(this, () -> getFacing().getOpposite()){
 		// TODO
 		// @formatter:off
 		// DyeColor.WHITE      = Disable machine.
@@ -257,7 +258,7 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 				setOutput(DyeColor.YELLOW, 15);
 			}
 			
-			markDirty();
+			//markDirty();
 		}
 		
 		private boolean chamberOutputs(CokingChamber chamber, DyeColor... colors){
@@ -265,7 +266,6 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			
 			boolean needsPower = false;
 			if(chamber.getRecipe() != null){
-				// TODO Convert to Switch-Statement
 				int progress = 0;
 				switch(chamber.getState()){
 					case PROCESSING:{
@@ -366,6 +366,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 			}
 		}
 		return super.getCapability(capability, side);
+	}
+	
+	@Override
+	public void invalidateCaps(){
+		super.invalidateCaps();
+		this.bundled_redstone.invalidate();
 	}
 	
 	@Override

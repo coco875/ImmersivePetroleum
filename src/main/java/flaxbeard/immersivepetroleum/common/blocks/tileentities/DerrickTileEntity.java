@@ -14,6 +14,7 @@ import blusunrize.immersiveengineering.api.crafting.MultiblockRecipe;
 import blusunrize.immersiveengineering.api.fluid.IFluidPipe;
 import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransform;
 import blusunrize.immersiveengineering.api.wires.redstone.CapabilityRedstoneNetwork;
+import blusunrize.immersiveengineering.api.wires.redstone.CapabilityRedstoneNetwork.RedstoneBundleConnection;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
@@ -641,6 +642,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 	@Override
 	public void doGraphicalUpdates(){
 		updateMasterBlock(null, true);
+		this.bundled_redstone.ifPresent(r -> r.markDirty());
 	}
 	
 	@Override
@@ -719,7 +721,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			this, be -> be.fluidInputHandler, DerrickTileEntity::master, registerFluidInput(tank)
 	);
 	private final ResettableCapability<IFluidHandler> dummyTank = registerFluidOutput(DUMMY_TANK);
-	private final ResettableCapability<SimpleRedstoneBundleConnection<DerrickTileEntity>> bundled_redstone = registerCapability(new SimpleRedstoneBundleConnection<>(this, (getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise()).getOpposite()){
+	private final LazyOptional<RedstoneBundleConnection> bundled_redstone = LazyOptional.of(() -> new SimpleRedstoneBundleConnection<>(this, () -> (getIsMirrored() ? getFacing().getCounterClockWise() : getFacing().getClockWise()).getOpposite()){
 		// TODO
 		// @formatter:off
 		// DyeColor.WHITE      = Disable machine.
@@ -796,8 +798,6 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			if(problemDetected){
 				setOutput(DyeColor.RED, 15);
 			}
-			
-			markDirty();
 		}
 	});
 	
@@ -846,6 +846,12 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 			}
 		}
 		return super.getCapability(capability, side);
+	}
+	
+	@Override
+	public void invalidateCaps(){
+		super.invalidateCaps();
+		this.bundled_redstone.invalidate();
 	}
 	
 	public boolean isLadder(){

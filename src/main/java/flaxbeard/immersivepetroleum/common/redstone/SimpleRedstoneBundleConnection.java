@@ -1,6 +1,5 @@
 package flaxbeard.immersivepetroleum.common.redstone;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Supplier;
 
@@ -17,20 +16,19 @@ import net.minecraft.world.item.DyeColor;
  */
 public class SimpleRedstoneBundleConnection<M extends PoweredMultiblockBlockEntity<M, ?>> extends RedstoneBundleConnection{
 	private M mb;
-	@Nullable
-	protected final Direction facing;
+	private final Supplier<Direction> facing;
 	/** From Network */
 	private byte[] inputs;
 	/** To Network */
 	private byte[] outputs;
-	public SimpleRedstoneBundleConnection(@Nonnull M mb, Supplier<Direction> sup){
-		this(mb, sup.get());
-	}
 	public SimpleRedstoneBundleConnection(@Nonnull M mb, @Nullable Direction direction){
+		this(mb, () -> direction);
+	}
+	public SimpleRedstoneBundleConnection(@Nonnull M mb, Supplier<Direction> sup){
 		Objects.requireNonNull(mb, "Multiblock BlockEntity must not be null.");
 		
 		this.mb = mb;
-		this.facing = direction;
+		this.facing = sup;
 	}
 	
 	/**
@@ -66,6 +64,7 @@ public class SimpleRedstoneBundleConnection<M extends PoweredMultiblockBlockEnti
 		byte v = (byte) (strength & 0xF);
 		if(this.outputs[color.getId()] < v){
 			this.outputs[color.getId()] = v;
+			markDirty();
 			return true;
 		}else{
 			return false;
@@ -74,7 +73,7 @@ public class SimpleRedstoneBundleConnection<M extends PoweredMultiblockBlockEnti
 	
 	protected final int getOutput(@Nonnull DyeColor color){
 		if(this.outputs == null)
-			throw new IllegalStateException("setOutput must only be called inside updateNetworkInput.");
+			throw new IllegalStateException("getOutput must only be called inside updateNetworkInput.");
 		
 		return ((int) this.outputs[color.getId()]) & 0xF;
 	}
@@ -95,7 +94,7 @@ public class SimpleRedstoneBundleConnection<M extends PoweredMultiblockBlockEnti
 	@Override
 	@Deprecated
 	public void onChange(byte[] externalInputs, Direction side){
-		if(this.facing == null || side == this.facing){
+		if(this.facing.get() == null || side == this.facing.get()){
 			makeSureItsMaster();
 			this.inputs = externalInputs;
 			onNetworkChange();
@@ -107,15 +106,11 @@ public class SimpleRedstoneBundleConnection<M extends PoweredMultiblockBlockEnti
 	@Override
 	@Deprecated
 	public void updateInput(byte[] signals, Direction side){
-		if(this.facing == null || side == this.facing){
+		if(this.facing.get() == null || side == this.facing.get()){
 			makeSureItsMaster();
-			byte[] copy = Arrays.copyOf(signals, signals.length);
 			this.outputs = signals;
 			updateNetworkInput();
 			this.outputs = null;
-			if(!Arrays.equals(copy, signals)){
-				markDirty();
-			}
 		}
 	}
 	
