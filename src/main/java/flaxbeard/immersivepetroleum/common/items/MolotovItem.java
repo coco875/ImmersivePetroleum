@@ -43,18 +43,22 @@ public class MolotovItem extends IPItemBase{
 		super.inventoryTick(pStack, pLevel, pEntity, pSlotId, pIsSelected);
 		
 		if(this.isLit && pEntity instanceof Player player){
-			if(player.getAbilities().instabuild){
-				return;
-			}
 			if(pStack.hasTag() && pStack.getTag().contains("lit_time", Tag.TAG_LONG)){
 				int duration = (int) (pLevel.getGameTime() - pStack.getTag().getLong("lit_time")) / 20;
-				if(duration > SECONDS){
-					player.getSlot(pSlotId).set(new ItemStack(Items.GLASS_BOTTLE, 1));
-					return;
-				}
 				
-				if(pStack.getDamageValue() != duration){
-					pStack.setDamageValue(duration);
+				if(player.getAbilities().instabuild){
+					if(duration > 0 && pStack.getDamageValue() == 0){
+						pStack.setDamageValue(1);
+					}
+				}else{
+					if(duration > SECONDS){
+						player.getSlot(pSlotId).set(new ItemStack(Items.GLASS_BOTTLE, 1));
+						return;
+					}
+					
+					if(pStack.getDamageValue() != duration){
+						pStack.setDamageValue(duration);
+					}
 				}
 			}
 		}
@@ -62,20 +66,22 @@ public class MolotovItem extends IPItemBase{
 	
 	@Override
 	public InteractionResultHolder<ItemStack> use(Level pLevel, Player pPlayer, InteractionHand pUsedHand){
-		if(this.isLit && pPlayer.getItemInHand(InteractionHand.OFF_HAND).getItem() != Items.FLINT_AND_STEEL){
+		if(this.isLit){
 			ItemStack stack = pPlayer.getItemInHand(pUsedHand);
-			if(stack.isDamaged()){
+			if(stack.isDamaged() && !pLevel.isClientSide){
 				pLevel.playSound(null, pPlayer.getX(), pPlayer.getY(), pPlayer.getZ(), SoundEvents.EXPERIENCE_BOTTLE_THROW, SoundSource.NEUTRAL, 0.5F, 0.4F / (pLevel.getRandom().nextFloat() * 0.4F + 0.8F));
-				if(!pLevel.isClientSide){
-					MolotovItemEntity entity = new MolotovItemEntity(pLevel, pPlayer);
-					entity.setItem(stack);
-					entity.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0F, 0.75F, 1.0F);
-					pLevel.addFreshEntity(entity);
+				
+				MolotovItemEntity entity = new MolotovItemEntity(pLevel, pPlayer);
+				entity.setItem(stack);
+				entity.shootFromRotation(pPlayer, pPlayer.getXRot(), pPlayer.getYRot(), 0.0F, 0.75F, 1.0F);
+				pLevel.addFreshEntity(entity);
+				
+				if(!pPlayer.getAbilities().instabuild){
+					stack.shrink(1);
 				}
-				stack.shrink(1);
 			}
 			
-			return InteractionResultHolder.sidedSuccess(stack, pLevel.isClientSide());
+			return InteractionResultHolder.consume(pPlayer.getItemInHand(pUsedHand));
 		}else{
 			ItemStack mainStack = pPlayer.getItemInHand(pUsedHand);
 			ItemStack offStack = pPlayer.getItemInHand(InteractionHand.OFF_HAND);
@@ -96,7 +102,7 @@ public class MolotovItem extends IPItemBase{
 			
 			if(mainStack.getItem() == this && offStack.getItem() == Items.FLINT_AND_STEEL){
 				pStack.shrink(1);
-				if(player instanceof ServerPlayer){
+				if(player instanceof ServerPlayer && !player.getAbilities().instabuild){
 					offStack.hurtAndBreak(1, player, (p) -> p.broadcastBreakEvent(InteractionHand.OFF_HAND));
 				}
 				
