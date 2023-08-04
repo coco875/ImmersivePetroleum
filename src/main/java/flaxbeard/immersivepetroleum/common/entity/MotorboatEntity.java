@@ -11,9 +11,10 @@ import blusunrize.immersiveengineering.api.Lib;
 import blusunrize.immersiveengineering.common.util.IESounds;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.energy.FuelHandler;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPContent.BoatUpgrades;
-import flaxbeard.immersivepetroleum.common.IPContent.Items;
 import flaxbeard.immersivepetroleum.common.items.DebugItem;
+import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
 import flaxbeard.immersivepetroleum.common.items.MotorboatItem;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageConsumeBoatFuel;
@@ -66,6 +67,7 @@ import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.entity.IEntityAdditionalSpawnData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
@@ -398,27 +400,29 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		if(Utils.isFluidRelatedItemStack(stack)){
 			FluidStack fstack = FluidUtil.getFluidContained(stack).orElse(null);
 			if(fstack != null){
-				FluidTank tank = new FluidTank(getMaxFuel()){
-					@Override
-					public boolean isFluidValid(FluidStack stack){
-						return FuelHandler.isValidBoatFuel(stack.getFluid());
-					}
-				};
+				FluidTank tank = getInternalTank();
 				
-				FluidStack fs = getContainedFluid();
-				tank.setFluid(fs);
-				
-				FluidUtil.interactWithFluidHandler(player, hand, tank);
-				
-				setContainedFluid(tank.getFluid());
-				
-				if(tank.isFluidValid(fstack)){
-					Utils.unlockIPAdvancement(player, "main/motorboat");
-					if(this.hasTank && tank.getFluidAmount() == tank.getCapacity()){
-						Utils.unlockIPAdvancement(player, "main/tank");
-					}
+				if(FluidUtil.interactWithFluidHandler(player, hand, tank)){
+					setContainedFluid(tank.getFluid());
+					advancement(tank, fstack, player);
 				}
 			}
+			return InteractionResult.SUCCESS;
+		}
+		
+		if(stack.getItem() instanceof GasolineBottleItem gasbottle){
+			FluidTank tank = getInternalTank();
+			FluidStack fstack = new FluidStack(IPContent.Fluids.GASOLINE.get(), GasolineBottleItem.FILLED_AMOUNT);
+			
+			if(tank.fill(fstack, FluidAction.SIMULATE) >= GasolineBottleItem.FILLED_AMOUNT){
+				tank.fill(fstack, FluidAction.EXECUTE);
+				
+				gasbottle.toEmptyBottle(player, stack);
+				
+				setContainedFluid(tank.getFluid());
+				advancement(tank, fstack, player);
+			}
+			
 			return InteractionResult.SUCCESS;
 		}
 		
@@ -431,6 +435,22 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 		}
 		
 		return InteractionResult.FAIL;
+	}
+	
+	private FluidTank getInternalTank(){
+		FluidTank tank = new FluidTank(getMaxFuel(), e -> FuelHandler.isValidBoatFuel(e.getFluid()));
+		FluidStack fs = getContainedFluid();
+		tank.setFluid(fs);
+		return tank;
+	}
+	
+	private void advancement(FluidTank tank, FluidStack fstack, Player player){
+		if(tank.isFluidValid(fstack)){
+			Utils.unlockIPAdvancement(player, "main/motorboat");
+			if(this.hasTank && tank.getFluidAmount() == tank.getCapacity()){
+				Utils.unlockIPAdvancement(player, "main/tank");
+			}
+		}
 	}
 	
 	@Override
@@ -761,7 +781,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	@Override
 	@Nonnull
 	public Item getDropItem(){
-		return Items.SPEEDBOAT.get();
+		return IPContent.Items.SPEEDBOAT.get();
 	}
 	
 	@Override
