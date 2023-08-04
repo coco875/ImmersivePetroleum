@@ -15,7 +15,8 @@
             "immersivepetroleum:hydrotreater",
             "immersivepetroleum:portablegenerator",
             "immersivepetroleum:projector",
-            "immersivepetroleum:speedboat"
+            "immersivepetroleum:speedboat",
+            "immersivepetroleum:molotov"
         ]
     }
 }

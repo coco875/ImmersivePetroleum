@@ -1,0 +1,6 @@
+Molotov
+Perfect for Riots
+<&gasolinebottle>
+Sample Text
+<&molotov>
+Sample Text
