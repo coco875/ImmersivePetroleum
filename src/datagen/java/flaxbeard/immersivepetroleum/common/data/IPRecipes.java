@@ -30,6 +30,7 @@ import flaxbeard.immersivepetroleum.api.crafting.builders.DistillationTowerRecip
 import flaxbeard.immersivepetroleum.api.crafting.builders.HighPressureRefineryRecipeBuilder;
 import flaxbeard.immersivepetroleum.api.crafting.builders.ReservoirBuilder;
 import flaxbeard.immersivepetroleum.common.IPContent;
+import flaxbeard.immersivepetroleum.common.items.GasolineBottleItem;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import me.desht.pneumaticcraft.common.core.ModFluids;
 import net.minecraft.data.DataGenerator;
@@ -463,7 +464,7 @@ public class IPRecipes extends RecipeProvider{
 			.save(this.out, rl("molotov_fabric"));
 		
 		BottlingMachineRecipeBuilder.builder(IPContent.Items.GASOLINE_BOTTLE.get())
-			.addFluidTag(IPTags.Fluids.gasoline, 250)
+			.addFluidTag(IPTags.Fluids.gasoline, GasolineBottleItem.FILLED_AMOUNT)
 			.addInput(Items.GLASS_BOTTLE)
 			.build(this.out, rl("bottling/gasoline_bottle"));
 	}
