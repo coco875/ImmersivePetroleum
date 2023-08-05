@@ -39,31 +39,27 @@ public class GasolineBottleItem extends IPItemBase{
 		ItemStack stack = player.getItemInHand(usedHand);
 		
 		HitResult hit = getPlayerPOVHitResult(level, player, ClipContext.Block.COLLIDER);
-		if(hit.getType() == HitResult.Type.MISS){
-			return InteractionResultHolder.pass(stack);
-		}else{
-			if(hit.getType() == HitResult.Type.BLOCK && hit instanceof BlockHitResult bHit){
-				BlockPos pos = bHit.getBlockPos();
-				if(!level.mayInteract(player, pos)){
-					return InteractionResultHolder.pass(stack);
+		if(hit.getType() == HitResult.Type.BLOCK && hit instanceof BlockHitResult bHit){
+			BlockPos pos = bHit.getBlockPos();
+			if(!level.mayInteract(player, pos)){
+				return InteractionResultHolder.pass(stack);
+			}
+			
+			BlockEntity be = level.getBlockEntity(pos);
+			if(be != null){
+				IFluidHandler fh = be.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null).orElse(null);
+				if(fh != null){
+					FluidStack fs = new FluidStack(IPContent.Fluids.GASOLINE.get(), GasolineBottleItem.FILLED_AMOUNT);
+					if(fh.fill(fs, FluidAction.SIMULATE) >= GasolineBottleItem.FILLED_AMOUNT){
+						fh.fill(fs, FluidAction.EXECUTE);
+						
+						toEmptyBottle(player, stack);
+						
+						return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
+					}
 				}
 				
-				BlockEntity be = level.getBlockEntity(pos);
-				if(be != null){
-					IFluidHandler fh = be.getCapability(CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY, null).orElse(null);
-					if(fh != null){
-						FluidStack fs = new FluidStack(IPContent.Fluids.GASOLINE.get(), GasolineBottleItem.FILLED_AMOUNT);
-						if(fh.fill(fs, FluidAction.SIMULATE) >= GasolineBottleItem.FILLED_AMOUNT){
-							fh.fill(fs, FluidAction.EXECUTE);
-							
-							toEmptyBottle(player, stack);
-							
-							return InteractionResultHolder.sidedSuccess(stack, level.isClientSide);
-						}
-					}
-					
-					return InteractionResultHolder.pass(stack);
-				}
+				return InteractionResultHolder.pass(stack);
 			}
 		}
 		
