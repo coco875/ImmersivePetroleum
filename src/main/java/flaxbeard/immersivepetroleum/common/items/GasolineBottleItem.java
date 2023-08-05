@@ -30,6 +30,11 @@ public class GasolineBottleItem extends IPItemBase{
 	}
 	
 	@Override
+	public int getItemStackLimit(ItemStack stack){
+		return 16;
+	}
+	
+	@Override
 	public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand){
 		ItemStack stack = player.getItemInHand(usedHand);
 		
