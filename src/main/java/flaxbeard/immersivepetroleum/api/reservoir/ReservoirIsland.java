@@ -67,11 +67,11 @@ public class ReservoirIsland{
 		int maxZ = Integer.MIN_VALUE;
 		
 		for(ColumnPos p:this.poly){
-			if(p.x < minX) minX = p.x;
-			if(p.z < minZ) minZ = p.z;
+			if(ColumnPos.getX(p.toLong()) < minX) minX = ColumnPos.getX(p.toLong()) ;
+			if(ColumnPos.getZ(p.toLong()) < minZ) minZ = ColumnPos.getZ(p.toLong());
 			
-			if(p.x > maxX) maxX = p.x;
-			if(p.z > maxZ) maxZ = p.z;
+			if(ColumnPos.getX(p.toLong()) > maxX) maxX = ColumnPos.getX(p.toLong()) ;
+			if(ColumnPos.getZ(p.toLong()) > maxZ) maxZ = ColumnPos.getZ(p.toLong());
 		}
 		
 		this.islandAABB = new AxisAlignedIslandBB(minX, minZ, maxX, maxZ);
@@ -276,8 +276,8 @@ public class ReservoirIsland{
 		final AxisAlignedIslandBB bounds = this.getBoundingBox();
 		final ListTag points = new ListTag();
 		this.poly.forEach(pos -> {
-			byte x = (byte) ((pos.x - bounds.minX) & 0xFF);
-			byte z = (byte) ((pos.z - bounds.minZ) & 0xFF);
+			byte x = (byte) ((ColumnPos.getX(pos.toLong()) - bounds.minX) & 0xFF);
+			byte z = (byte) ((ColumnPos.getZ(pos.toLong()) - bounds.minZ) & 0xFF);
 			
 			CompoundTag point = new CompoundTag();
 			point.putByte("x", x);
@@ -328,7 +328,7 @@ public class ReservoirIsland{
 	 * @see {@link #contains(int, int)}
 	 */
 	public boolean contains(ColumnPos pos){
-		return contains(pos.x, pos.z);
+		return contains(ColumnPos.getX(pos.toLong()), ColumnPos.getZ(pos.toLong()));
 	}
 	
 	/**
@@ -352,7 +352,7 @@ public class ReservoirIsland{
 	 * @see {@link #polygonContains(int, int)}
 	 */
 	public boolean polygonContains(ColumnPos pos){
-		return polygonContains(pos.x, pos.z);
+		return polygonContains(ColumnPos.getX(pos.toLong()), ColumnPos.getZ(pos.toLong()));
 	}
 	
 	/**
@@ -370,8 +370,8 @@ public class ReservoirIsland{
 			ColumnPos b = this.poly.get(j);
 			
 			// They need to be floats or it wont work for some reason
-			float ax = a.x, az = a.z;
-			float bx = b.x, bz = b.z;
+			float ax = ColumnPos.getX(a.toLong()), az = ColumnPos.getZ(a.toLong());
+			float bx = ColumnPos.getX(b.toLong()), bz = ColumnPos.getZ(b.toLong());
 			
 			// Any point directly on the edge is considered "outside"
 			if((ax == x && az == z)){

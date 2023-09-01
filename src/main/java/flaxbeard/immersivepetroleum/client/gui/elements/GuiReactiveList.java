@@ -21,8 +21,10 @@ import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+
+import net.minecraft.client.gui.components.Button.OnPress;
 
 @SuppressWarnings("unused")
 public class GuiReactiveList extends Button{
@@ -45,7 +47,7 @@ public class GuiReactiveList extends Button{
 	private float hoverTimer = 0;
 	
 	public GuiReactiveList(Screen gui, int x, int y, int w, int h, OnPress handler, String... entries){
-		super(x, y, w, h, TextComponent.EMPTY, handler);
+		super(x, y, w, h, Component.nullToEmpty(null), handler);
 		this.gui = gui;
 		this.entries = entries;
 		recalculateEntries();

@@ -48,13 +48,14 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent;
-import net.minecraftforge.client.event.RenderBlockOverlayEvent.OverlayType;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.CustomizeGuiOverlayEvent;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent;
+import net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.model.data.EmptyModelData;
 import net.minecraftforge.event.TickEvent.ClientTickEvent;
 import net.minecraftforge.event.TickEvent.Phase;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -114,7 +115,7 @@ public class ClientEventHandler{
 													
 													BlockState state = IPContent.Blocks.AUTO_LUBRICATOR.get().defaultBlockState().setValue(AutoLubricatorBlock.FACING, targetFacing);
 													BakedModel model = blockDispatcher.getBlockModel(state);
-													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, EmptyModelData.INSTANCE);
+													blockDispatcher.getModelRenderer().renderModel(matrix.last(), vBuilder, null, model, 1.0F, 1.0F, 1.0F, 0xF000F0, OverlayTexture.NO_OVERLAY, ModelData.EMPTY, null);
 													
 												}
 												matrix.popPose();
@@ -134,7 +135,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void reservoirDebuggingOverlayText(RenderGameOverlayEvent.Post event){
+	public void reservoirDebuggingOverlayText(RenderGuiOverlayEvent.Post event){
 		if(ReservoirHandler.getGenerator() == null){
 			return;
 		}
@@ -152,7 +153,7 @@ public class ClientEventHandler{
 			List<Component> debugOut = new ArrayList<>();
 			
 			if(!debugOut.isEmpty()){
-				PoseStack matrix = event.getMatrixStack();
+				PoseStack matrix = event.getPoseStack();
 				matrix.pushPose();
 				MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 				for(int i = 0;i < debugOut.size();i++){
@@ -173,8 +174,8 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void renderInfoOverlays(RenderGameOverlayEvent.Post event){
-		if(MCUtil.getPlayer() != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+	public void renderInfoOverlays(CustomizeGuiOverlayEvent.DebugText event){
+		if(MCUtil.getPlayer() != null){
 			Player player = MCUtil.getPlayer();
 			
 			if(MCUtil.getHitResult() != null){
@@ -192,7 +193,7 @@ public class ClientEventHandler{
 									if(text[i] != null){
 										int fx = event.getWindow().getGuiScaledWidth() / 2 + 8;
 										int fy = event.getWindow().getGuiScaledHeight() / 2 + 8 + i * font.lineHeight;
-										font.drawShadow(event.getMatrixStack(), text[i], fx, fy, col);
+										font.drawShadow(event.getPoseStack(), text[i], fx, fy, col);
 									}
 								}
 							}
@@ -204,10 +205,10 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void onRenderOverlayPost(RenderGameOverlayEvent.Post event){
-		if(MCUtil.getPlayer() != null && event.getType() == RenderGameOverlayEvent.ElementType.TEXT){
+	public void onRenderOverlayPost(CustomizeGuiOverlayEvent.DebugText event){
+		if(MCUtil.getPlayer() != null){
 			Player player = MCUtil.getPlayer();
-			PoseStack matrix = event.getMatrixStack();
+			PoseStack matrix = event.getPoseStack();
 			
 			if(player.getVehicle() instanceof MotorboatEntity motorboat){
 				int offset = 0;
@@ -240,7 +241,7 @@ public class ClientEventHandler{
 					VertexConsumer builder = ItemOverlayUtils.getHudElementsBuilder(buffer);
 					
 					int rightOffset = 0;
-					if(MCUtil.getOptions().showSubtitles)
+					if(MCUtil.getOptions().showSubtitles().get())
 						rightOffset += 100;
 					float dx = scaledWidth - rightOffset - 16;
 					float dy = scaledHeight + offset;
@@ -300,7 +301,7 @@ public class ClientEventHandler{
 	}
 	
 	@SubscribeEvent
-	public void handleBoatImmunity(RenderBlockOverlayEvent event){
+	public void handleBoatImmunity(RenderBlockScreenEffectEvent event){
 		Player entity = event.getPlayer();
 		if(event.getOverlayType() == OverlayType.FIRE && entity.isOnFire() && entity.getVehicle() instanceof MotorboatEntity boat){
 			if(boat.isFireproof){
@@ -311,7 +312,7 @@ public class ClientEventHandler{
 	
 	@SubscribeEvent
 	public void handleFireRender(RenderPlayerEvent.Pre event){
-		Player entity = event.getPlayer();
+		Player entity = event.getEntity();
 		if(entity.isOnFire() && entity.getVehicle() instanceof MotorboatEntity boat){
 			if(boat.isFireproof){
 				entity.clearFire();

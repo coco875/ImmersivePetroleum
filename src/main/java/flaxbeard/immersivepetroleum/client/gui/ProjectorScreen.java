@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.client.render.IPRenderTypes;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import flaxbeard.immersivepetroleum.common.util.projector.Settings;
+import me.desht.pneumaticcraft.client.util.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.AbstractButton;
@@ -36,8 +37,7 @@ import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.world.InteractionHand;
@@ -46,8 +46,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.levelgen.structure.templatesystem.StructureTemplate;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.client.model.data.EmptyModelData;
-import net.minecraftforge.client.model.data.IModelData;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.common.util.Lazy;
 
 public class ProjectorScreen extends Screen{
@@ -80,7 +79,7 @@ public class ProjectorScreen extends Screen{
 	
 	float rotation = 0.0F, move = 0.0F;
 	public ProjectorScreen(InteractionHand hand, ItemStack projector){
-		super(new TextComponent("projector"));
+		super(Component.literal("projector"));
 		this.settings = new Settings(projector);
 		this.hand = hand;
 		this.multiblocks = Lazy.of(MultiblockHandler::getMultiblocks);
@@ -223,11 +222,11 @@ public class ProjectorScreen extends Screen{
 			int y = this.guiTop + 82;
 			
 			Direction dir = Direction.from2DDataValue(this.settings.getRotation().ordinal());
-			TextComponent dirText = new TextComponent(dir.toString().toUpperCase().substring(0, 1));
+			MutableComponent dirText = Component.literal(dir.toString().toUpperCase().substring(0, 1));
 			drawCenteredString(matrix, this.font, dirText, x + 5, y + 1, -1);
 			
 			if(mouseX > x && mouseX < x + 10 && mouseY > y && mouseY < y + 10){
-				Component rotText = new TranslatableComponent("desc.immersivepetroleum.info.projector.rotated." + dir);
+				Component rotText = Component.translatable("desc.immersivepetroleum.info.projector.rotated." + dir);
 				renderTooltip(matrix, rotText, mouseX, mouseY);
 			}
 		}
@@ -270,12 +269,12 @@ public class ProjectorScreen extends Screen{
 								matrix.pushPose();
 								{
 									matrix.translate(info.pos.getX(), info.pos.getY(), info.pos.getZ());
-									IModelData modelData = EmptyModelData.INSTANCE;
+									ModelData modelData = ModelData.EMPTY;
 									BlockEntity te = this.templateWorld.getBlockEntity(info.pos);
 									if(te != null){
 										modelData = te.getModelData();
 									}
-									blockRender.renderSingleBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), 0xF000F0, OverlayTexture.NO_OVERLAY, modelData);
+									blockRender.renderSingleBlock(info.state, matrix, IPRenderTypes.disableLighting(buffer), RenderUtils.FULL_BRIGHT, OverlayTexture.NO_OVERLAY, modelData, null);
 								}
 								matrix.popPose();
 							}
@@ -419,7 +418,7 @@ public class ProjectorScreen extends Screen{
 	// STATIC METHODS
 	
 	static Component translation(String key){
-		return new TranslatableComponent(key);
+		return Component.translatable(key);
 	}
 	
 	// STATIC CLASSES
@@ -431,7 +430,7 @@ public class ProjectorScreen extends Screen{
 		protected int bgStartX = 0, bgStartY = 166;
 		protected Consumer<PButton> action;
 		public PButton(int x, int y, int width, int height, int overlayX, int overlayY, Consumer<PButton> action){
-			super(x, y, width, height, TextComponent.EMPTY);
+			super(x, y, width, height, Component.nullToEmpty(null));
 			this.action = action;
 			this.xOverlay = overlayX;
 			this.yOverlay = overlayY;

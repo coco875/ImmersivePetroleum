@@ -39,7 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddReloadListenerEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
-import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.level.LevelEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModList;
@@ -156,8 +156,8 @@ public class ImmersivePetroleum{
 		event.addListener(new RecipeReloadListener(event.getServerResources()));
 	}
 	
-	public void worldLoad(WorldEvent.Load event){
-		if(!event.getWorld().isClientSide() && event.getWorld() instanceof ServerLevel world && world.dimension() == Level.OVERWORLD){
+	public void worldLoad(LevelEvent.Load event){
+		if(!event.getLevel().isClientSide() && event.getLevel() instanceof ServerLevel world && world.dimension() == Level.OVERWORLD){
 			ReservoirRegionDataStorage.init(world.getDataStorage());
 			world.getDataStorage().computeIfAbsent(IPSaveData::new, IPSaveData::new, IPSaveData.dataName);
 		}

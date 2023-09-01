@@ -19,11 +19,12 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.model.data.EmptyModelData;
+import net.minecraftforge.client.model.data.ModelData;
 
 public class PumpjackClientData extends IPClientMultiblockProperties{
 	public PumpjackClientData(){
@@ -50,7 +51,7 @@ public class PumpjackClientData extends IPClientMultiblockProperties{
 		if(this.list == null){
 			BlockState state = te.getBlockState();
 			BakedModel model = MCUtil.getBlockRenderer().getBlockModel(state);
-			this.list = model.getQuads(state, null, ApiUtils.RANDOM, EmptyModelData.INSTANCE);
+			this.list = model.getQuads(state, null, (RandomSource) ApiUtils.RANDOM, ModelData.EMPTY, null);
 		}
 		
 		if(this.list != null && this.list.size() > 0){

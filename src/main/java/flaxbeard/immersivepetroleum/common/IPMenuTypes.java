@@ -2,9 +2,10 @@ package flaxbeard.immersivepetroleum.common;
 
 import org.apache.commons.lang3.mutable.Mutable;
 import org.apache.commons.lang3.mutable.MutableObject;
+import org.checkerframework.checker.units.qual.C;
 
-import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
-import blusunrize.immersiveengineering.common.register.IEContainerTypes;
+import blusunrize.immersiveengineering.common.gui.IEBaseContainerOld;
+import blusunrize.immersiveengineering.common.register.IEMenuTypes;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.CokerUnitTileEntity;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
@@ -22,6 +23,8 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.network.IContainerFactory;
 import net.minecraftforge.registries.RegistryObject;
 
+// import BEContainerIP;
+
 public class IPMenuTypes{
 	public static final BEContainerIP<DistillationTowerTileEntity, DistillationTowerContainer> DISTILLATION_TOWER =
 			register("distillation_tower", DistillationTowerContainer::new);
@@ -35,7 +38,7 @@ public class IPMenuTypes{
 	public static void forceClassLoad(){}
 	
 	@SuppressWarnings("unchecked")
-	public static <T extends BlockEntity, C extends IEBaseContainer<? super T>> BEContainerIP<T, C> register(String name, IEContainerTypes.BEContainerConstructor<T, C> container){
+	public static <T extends BlockEntity, C extends IEBaseContainerOld<? super T>> BEContainerIP<T, C> register(String name, IEMenuTypes.BEContainerConstructor<T, C> container){
 		RegistryObject<MenuType<C>> typeRef = IPRegisters.registerMenu(name, () -> {
 			Mutable<MenuType<C>> typeBox = new MutableObject<>();
 			MenuType<C> type = new MenuType<>((IContainerFactory<C>) (windowId, inv, data) -> {

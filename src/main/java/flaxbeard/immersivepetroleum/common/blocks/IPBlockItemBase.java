@@ -9,14 +9,14 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
+
+import net.minecraft.world.item.Item.Properties;
 
 public class IPBlockItemBase extends BlockItem{
 	public IPBlockItemBase(Block blockIn, Properties builder){
@@ -34,7 +34,7 @@ public class IPBlockItemBase extends BlockItem{
 				if(fluidstack.getAmount() > 0){
 					tooltip.add(((MutableComponent) fluidstack.getDisplayName()).append(" " + fluidstack.getAmount() + "mB").withStyle(ChatFormatting.GRAY));
 				}else{
-					tooltip.add(new TranslatableComponent(Lib.GUI + "empty").withStyle(ChatFormatting.GRAY));
+					tooltip.add(Component.translatable(Lib.GUI + "empty").withStyle(ChatFormatting.GRAY));
 				}
 			}
 			
@@ -42,7 +42,7 @@ public class IPBlockItemBase extends BlockItem{
 			if(stack.getTag().contains("energy")){
 				CompoundTag energy = stack.getTag().getCompound("energy");
 				int flux = energy.getInt("ifluxEnergy");
-				tooltip.add(new TextComponent(flux + "RF").withStyle(ChatFormatting.GRAY));
+				tooltip.add(Component.literal(flux + "RF").withStyle(ChatFormatting.GRAY));
 			}
 		}
 		

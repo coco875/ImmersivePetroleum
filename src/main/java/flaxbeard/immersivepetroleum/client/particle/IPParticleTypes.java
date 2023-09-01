@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import com.mojang.serialization.Codec;
 
-import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
+// import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -18,7 +18,7 @@ public class IPParticleTypes{
 	
 	private static SimpleParticleType createBasicParticle(String name, boolean alwaysShow){
 		SimpleParticleType particleType = new SimpleParticleType(alwaysShow);
-		particleType.setRegistryName(ResourceUtils.ip(name));
+		// particleType.setRegistryName(ResourceUtils.ip(name));
 		return particleType;
 	}
 	
@@ -31,7 +31,7 @@ public class IPParticleTypes{
 				return codec;
 			}
 		};
-		type.setRegistryName(ResourceUtils.ip(name));
+		// type.setRegistryName(ResourceUtils.ip(name));
 		return type;
 	}
 }

@@ -34,8 +34,8 @@ public class CokerUnitContainer extends MultiblockAwareGuiContainer<CokerUnitTil
 		
 		addSlot(new IPSlot.FluidContainer(this.inv, CokerUnitTileEntity.Inventory.OUTPUT_EMPTY.id(), 175, 14, FluidFilter.EMPTY));
 		addSlot(new IPSlot.ItemOutput(this.inv, CokerUnitTileEntity.Inventory.OUTPUT_FILLED.id(), 175, 45));
-		
-		this.slotCount = CokerUnitTileEntity.Inventory.values().length;
+
+		this.ownSlotCount = CokerUnitTileEntity.Inventory.values().length;
 		
 		addPlayerInventorySlots(playerInventory, 20, 105);
 		addPlayerHotbarSlots(playerInventory, 20, 163);

@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
+import blusunrize.immersiveengineering.api.crafting.IERecipeTypes.TypeWithClass;
 import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.api.crafting.CokerUnitRecipe;
 import flaxbeard.immersivepetroleum.api.crafting.DistillationTowerRecipe;
@@ -67,7 +68,7 @@ public class RecipeReloadListener implements ResourceManagerReloadListener{
 		HighPressureRefineryRecipe.recipes = filterRecipes(recipes, HighPressureRefineryRecipe.class, IPRecipeTypes.HYDROTREATER);
 	}
 	
-	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, RegistryObject<RecipeType<R>> recipeType){
+	static <R extends Recipe<?>> Map<ResourceLocation, R> filterRecipes(Collection<Recipe<?>> recipes, Class<R> recipeClass, TypeWithClass<R> recipeType){
 		return recipes.stream()
 				.filter(iRecipe -> iRecipe.getType() == recipeType.get())
 				.map(recipeClass::cast)

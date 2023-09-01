@@ -45,8 +45,10 @@ import net.minecraftforge.client.model.generators.ItemModelBuilder;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder;
 import net.minecraftforge.client.model.generators.VariantBlockStateBuilder.PartialBlockstate;
-import net.minecraftforge.client.model.generators.loaders.OBJLoaderBuilder;
+import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 
 public class IPBlockStates extends BlockStateProvider{
 	final ExistingFileHelper exFileHelper;
@@ -81,7 +83,7 @@ public class IPBlockStates extends BlockStateProvider{
 		{
 			Block well = IPContent.Blocks.WELL.get();
 			
-			ModelFile wellModel = models().cubeTop(well.getRegistryName().toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"));
+			ModelFile wellModel = models().cubeTop( ForgeRegistries.BLOCKS.getKey(well).toString(), mcLoc("block/bedrock"), modLoc("block/well_top_oil"));
 			getVariantBuilder(well).partialState()
 				.setModels(new ConfiguredModel(wellModel));
 		}
@@ -93,11 +95,11 @@ public class IPBlockStates extends BlockStateProvider{
 			ResourceLocation concrete_cracked = modLoc("block/concrete_cracked");
 			ResourceLocation wellPipeTexture = modLoc("block/well_pipe_top");
 			
-			ModelFile wellPipeModel = models().cubeBottomTop(wellPipe.getRegistryName().toString(), ieConreteTexture, wellPipeTexture, wellPipeTexture);
-			ModelFile wellPipeModel_cracked = models().cubeBottomTop(wellPipe.getRegistryName().toString() + "_cracked", concrete_cracked, wellPipeTexture, wellPipeTexture);
+			ModelFile wellPipeModel = models().cubeBottomTop(ForgeRegistries.BLOCKS.getKey(wellPipe).toString(), ieConreteTexture, wellPipeTexture, wellPipeTexture);
+			ModelFile wellPipeModel_cracked = models().cubeBottomTop(ForgeRegistries.BLOCKS.getKey(wellPipe).toString() + "_cracked", concrete_cracked, wellPipeTexture, wellPipeTexture);
 			
 			ModelFile wellPipeModel_cracked_mirrored = models()
-				.withExistingParent(wellPipe.getRegistryName().toString() + "_cracked_mirrored", "block/cube_mirrored")
+				.withExistingParent(ForgeRegistries.BLOCKS.getKey(wellPipe).toString() + "_cracked_mirrored", "block/cube_mirrored")
 				.texture("down", wellPipeTexture)
 				.texture("up", wellPipeTexture)
 				.texture("north", concrete_cracked)
@@ -117,8 +119,8 @@ public class IPBlockStates extends BlockStateProvider{
 		// Fluids
 		for(IPFluid.IPFluidEntry f:IPFluid.FLUIDS){
 			var still = f.still().get();
-			ResourceLocation stillTex = still.getAttributes().getStillTexture();
-			ModelFile model = this.models().getBuilder("block/fluid/" + still.getRegistryName().getPath()).texture("particle", stillTex);
+			ResourceLocation stillTex = IClientFluidTypeExtensions.of(still).getStillTexture();
+			ModelFile model = this.models().getBuilder("block/fluid/" + ForgeRegistries.FLUIDS.getKey(still).getPath()).texture("particle", stillTex);
 			
 			getVariantBuilder(f.block().get()).partialState().setModels(new ConfiguredModel(model));
 		}
@@ -132,7 +134,7 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private void stairsWithItem(StairBlock block, ResourceLocation texture){
-		String name = block.getRegistryName().toString();
+		String name = ForgeRegistries.BLOCKS.getKey(block).toString();
 		
 		ModelFile stairs = models().stairs(name, texture, texture, texture);
 		ModelFile stairsInner = models().stairsInner(name + "_inner", texture, texture, texture);
@@ -240,7 +242,7 @@ public class IPBlockStates extends BlockStateProvider{
 		
 		String name = getMultiblockPath(block) + add;
 		NongeneratedModel base = nongeneratedModels.withExistingParent(name, mcLoc("block"))
-			.customLoader(OBJLoaderBuilder::begin).modelLocation(model).detectCullableFaces(false).flipV(true).end()
+			.customLoader(ObjModelBuilder::begin).modelLocation(model).automaticCulling(false).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
 		
@@ -259,7 +261,7 @@ public class IPBlockStates extends BlockStateProvider{
 		BlockModelBuilder lube_empty = this.models().withExistingParent("lube_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture);
 		
 		BlockModelBuilder lubeModel = this.models().withExistingParent(getPath(IPContent.Blocks.AUTO_LUBRICATOR.get()), mcLoc("block"))
-			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
+			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/autolubricator.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
 		
@@ -284,7 +286,7 @@ public class IPBlockStates extends BlockStateProvider{
 		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("flare_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.FLARESTACK.get()), mcLoc("block"))
-			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
+			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/flarestack.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
 		
@@ -304,7 +306,7 @@ public class IPBlockStates extends BlockStateProvider{
 		ConfiguredModel emptyModel = new ConfiguredModel(this.models().withExistingParent("seismic_empty", ResourceUtils.ie("block/ie_empty")).texture("particle", texture));
 		
 		BlockModelBuilder flarestackModel = this.models().withExistingParent(getPath(IPContent.Blocks.SEISMIC_SURVEY.get()), mcLoc("block"))
-			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/seismic_survey_tool.obj")).flipV(true).end()
+			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/seismic_survey_tool.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
 		
@@ -323,7 +325,7 @@ public class IPBlockStates extends BlockStateProvider{
 		ResourceLocation texture = modLoc("block/obj/generator");
 		
 		BlockModelBuilder model = this.models().getBuilder(getPath(IPContent.Blocks.GAS_GENERATOR.get()))
-			.customLoader(OBJLoaderBuilder::begin).modelLocation(modLoc("models/block/obj/generator.obj")).flipV(true).end()
+			.customLoader(ObjModelBuilder::begin).modelLocation(modLoc("models/block/obj/generator.obj")).flipV(true).end()
 			.texture("texture", texture)
 			.texture("particle", texture);
 		
@@ -391,7 +393,7 @@ public class IPBlockStates extends BlockStateProvider{
 	}
 	
 	private String getPath(Block b){
-		return b.getRegistryName().getPath();
+		return ForgeRegistries.BLOCKS.getKey(b).getPath();
 	}
 	
 	private void itemModelWithParent(Block block, ModelFile parent){

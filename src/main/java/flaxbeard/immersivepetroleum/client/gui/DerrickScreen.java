@@ -24,8 +24,6 @@ import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 
@@ -51,9 +49,9 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 		this.leftPos = (this.width - this.imageWidth) / 2;
 		this.topPos = (this.height - this.imageHeight) / 2;
 		
-		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.config")), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)), (button, matrix, mx, my) -> {
+		this.cfgButton = new Button(this.leftPos + 125, this.topPos + 52, 50, 20, Component.literal(I18n.get("gui.immersivepetroleum.derrick.msg.config")), button -> this.minecraft.setScreen(new DerrickSettingsScreen(this)), (button, matrix, mx, my) -> {
 			if(!button.active){
-				renderTooltip(matrix, List.of(new TextComponent(I18n.get("gui.immersivepetroleum.derrick.msg.set_in_stone"))), Optional.empty(), mx, my);
+				renderTooltip(matrix, List.of(Component.literal(I18n.get("gui.immersivepetroleum.derrick.msg.set_in_stone"))), Optional.empty(), mx, my);
 			}
 		});
 		addRenderableWidget(this.cfgButton);
@@ -97,16 +95,16 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 			// Possible display prototypes
 			if(well.wellPipeLength < well.getMaxPipeLength()){
 				if(this.tile.isRSDisabled()){
-					drawInfoTextCentered(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.disabled"), 0, 0xEF0000);
+					drawInfoTextCentered(matrix, Component.translatable("gui.immersivepetroleum.derrick.msg.disabled"), 0, 0xEF0000);
 					return;
 				}
 				
 				if(this.tile.drilling){
 					String str = String.format(Locale.ROOT, "(%d%%)", (int) (100 * well.wellPipeLength / (float) well.getMaxPipeLength()));
-					drawInfoText(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.drilling", str), 0);
+					drawInfoText(matrix, Component.translatable("gui.immersivepetroleum.derrick.msg.drilling", str), 0);
 					return;
 				}else if(well.pipes <= 0 && !this.menu.getSlot(0).hasItem()){
-					drawInfoTextCentered(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.out_of_pipes"), 3, 0xEF0000);
+					drawInfoTextCentered(matrix, Component.translatable("gui.immersivepetroleum.derrick.msg.out_of_pipes"), 3, 0xEF0000);
 					return;
 				}
 				
@@ -114,14 +112,14 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 					int realPipeLength = (this.tile.getBlockPos().getY() - 1) - well.getBlockPos().getY();
 					int concreteNeeded = (DerrickTileEntity.CONCRETE.getAmount() * (realPipeLength - well.wellPipeLength));
 					if(concreteNeeded > 0){
-						drawInfoText(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(concreteNeeded) + "mB"), 0, 0xEF0000);
+						drawInfoText(matrix, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(concreteNeeded) + "mB"), 0, 0xEF0000);
 						drawInfoText(matrix, DerrickTileEntity.CONCRETE.getDisplayName(), 1, 0xEF0000);
 						return;
 					}
 					
 					int waterNeeded = DerrickTileEntity.WATER.getAmount() * (well.getMaxPipeLength() - well.wellPipeLength);
 					if(waterNeeded > 0){
-						drawInfoText(matrix, new TranslatableComponent("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);
+						drawInfoText(matrix, Component.translatable("gui.immersivepetroleum.derrick.msg.missing", Utils.fDecimal(waterNeeded) + "mB"), 0, 0xEF0000);
 						drawInfoText(matrix, DerrickTileEntity.WATER.getDisplayName(), 1, 0xEF0000);
 						return;
 					}
@@ -157,7 +155,7 @@ public class DerrickScreen extends AbstractContainerScreen<DerrickContainer>{
 	private void drawInfoTextCenteredMultiLine(PoseStack matrix, String text, int color){
 		String[] lines = text.split("<br>");
 		for(int i = 0;i < Math.min(lines.length, 4);i++){
-			drawInfoTextCentered(matrix, new TextComponent(lines[i].length() > 25 ? lines[i].substring(0, 25) : lines[i]), i, color);
+			drawInfoTextCentered(matrix, Component.literal(lines[i].length() > 25 ? lines[i].substring(0, 25) : lines[i]), i, color);
 		}
 	}
 	

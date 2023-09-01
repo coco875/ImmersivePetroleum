@@ -12,7 +12,6 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -23,6 +22,8 @@ import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
 
 public class ParaffinWaxBlock extends IPBlockBase{
 	
@@ -37,7 +38,7 @@ public class ParaffinWaxBlock extends IPBlockBase{
 	}
 	
 	static void tooltip(ItemStack stack, BlockGetter worldIn, List<Component> tooltip, TooltipFlag flagIn){
-		tooltip.add(new TranslatableComponent("desc.immersivepetroleum.flavour.paraffin_wax").withStyle(ChatFormatting.GRAY));
+		tooltip.add(Component.translatable("desc.immersivepetroleum.flavour.paraffin_wax").withStyle(ChatFormatting.GRAY));
 	}
 	
 	@Override

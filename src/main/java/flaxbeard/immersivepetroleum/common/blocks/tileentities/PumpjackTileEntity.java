@@ -48,6 +48,8 @@ import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.fluids.capability.templates.FluidTank;
 
+// import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity.MultiblockFace;
+
 public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTileEntity, MultiblockRecipe> implements IPCommonTickableTile, IEBlockInterfaces.IBlockBounds{
 	/** Template-Location of the Energy Input Port. (0, 1, 5) */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(0, 1, 5));
@@ -121,7 +123,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 						for(ColumnPos cPos:well.tappedIslands){
 							ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 							
-							if(island != null && island.getPressure(getLevelNonnull(), cPos.x, cPos.z) > 0.0F){
+							if(island != null && island.getPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong())) > 0.0F){
 								foundPressurizedIsland = true;
 								break;
 							}

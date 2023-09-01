@@ -19,7 +19,7 @@ public abstract class IPTileEntityBase extends BlockEntity{
 	}
 	
 	@Nonnull
-	public Level getWorldNonnull(){
+	public Level getLevelNonnull(){
 		return Objects.requireNonNull(super.getLevel());
 	}
 	

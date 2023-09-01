@@ -33,7 +33,7 @@ public class MolotovItemEntity extends ThrowableItemProjectile{
 	
 	private static EntityType<MolotovItemEntity> createType(){
 		EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(ImmersivePetroleum.MODID + "molotov");
-		ret.setRegistryName(ImmersivePetroleum.MODID, "molotov");
+		// ret.setRegistryName(ImmersivePetroleum.MODID, "molotov");
 		return ret;
 	}
 	

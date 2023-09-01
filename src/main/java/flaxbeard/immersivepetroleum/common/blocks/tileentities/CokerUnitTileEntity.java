@@ -16,6 +16,8 @@ import blusunrize.immersiveengineering.api.utils.shapes.CachedShapesWithTransfor
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces;
 import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.process.MultiblockProcess;
+import blusunrize.immersiveengineering.common.register.IEMenuTypes;
+import blusunrize.immersiveengineering.common.register.IEMenuTypes.BEContainer;
 import blusunrize.immersiveengineering.common.util.MultiblockCapability;
 import blusunrize.immersiveengineering.common.util.ResettableCapability;
 import blusunrize.immersiveengineering.common.util.Utils;
@@ -61,6 +63,8 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.CapabilityItemHandler;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+
+// import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity.MultiblockFace;
 
 public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitTileEntity, CokerUnitRecipe> implements IPCommonTickableTile, IPMenuProvider<CokerUnitTileEntity>, IEBlockInterfaces.IBlockBounds{
 	
@@ -531,6 +535,12 @@ public class CokerUnitTileEntity extends PoweredMultiblockBlockEntity<CokerUnitT
 	@Override
 	public BEContainerIP<? super CokerUnitTileEntity, ?> getContainerTypeIP(){
 		return IPMenuTypes.COKER;
+	}
+
+	@Override
+	public BEContainer<? super CokerUnitTileEntity, ?> getContainerType() {
+		// TODO: Maybe some change need to be made here
+		throw new UnsupportedOperationException("Use getContainerTypeIP");
 	}
 	
 	@Override

@@ -37,9 +37,10 @@ import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Material;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.registries.RegistryObject;
+
 
 public class IPFluid extends FlowingFluid{
 	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
@@ -48,27 +49,28 @@ public class IPFluid extends FlowingFluid{
 	protected final ResourceLocation stillTexture;
 	protected final ResourceLocation flowingTexture;
 	@Nullable
-	protected final Consumer<FluidAttributes.Builder> buildAttributes;
+	protected final Consumer<FluidType.Properties> buildAttributes;
 	
 	public IPFluid(IPFluidEntry entry, int density, int viscosity, boolean isGas){
 		this(entry, builder -> {
 			builder.viscosity(viscosity).density(density);
 			if(isGas)
-				builder.gaseous();
+				return; // TODO: add gas tag
+				//builder.gaseous();
 		});
 	}
 	
-	protected IPFluid(IPFluidEntry entry, Consumer<FluidAttributes.Builder> attributeBuilder){
+	protected IPFluid(IPFluidEntry entry, Consumer<FluidType.Properties> attributeBuilder){
 		this(entry,
 				ResourceUtils.ip("block/fluid/" + entry.name + "_still"),
 				ResourceUtils.ip("block/fluid/" + entry.name + "_flow"), attributeBuilder);
 	}
 	
-	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes){
+	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidType.Properties> buildAttributes){
 		this(entry, stillTexture, flowingTexture, buildAttributes, true);
 	}
 	
-	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidAttributes.Builder> buildAttributes, boolean isSource){
+	protected IPFluid(IPFluidEntry entry, ResourceLocation stillTexture, ResourceLocation flowingTexture, @Nullable Consumer<FluidType.Properties> buildAttributes, boolean isSource){
 		this.entry = entry;
 		this.stillTexture = stillTexture;
 		this.flowingTexture = flowingTexture;
@@ -93,18 +95,19 @@ public class IPFluid extends FlowingFluid{
 		return entry.getValue();
 	}
 	
-	@Override
-	@Nonnull
-	protected FluidAttributes createAttributes(){
-		FluidAttributes.Builder builder = FluidAttributes.builder(this.stillTexture, this.flowingTexture)
-				.overlay(this.stillTexture)
-				.sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+	// TODO fix this I don't know what I'm doing
+	// @Override
+	// @Nonnull
+	// protected FluidType createAttributes(){
+	// 	FluidType.Properties builder = FluidType.builder(this.stillTexture, this.flowingTexture)
+	// 			.overlay(this.stillTexture)
+	// 			.sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
 		
-		if(this.buildAttributes != null)
-			this.buildAttributes.accept(builder);
+	// 	if(this.buildAttributes != null)
+	// 		this.buildAttributes.accept(builder);
 		
-		return builder.build(this);
-	}
+	// 	return builder.build(this);
+	// }
 	
 	@Override
 	protected void beforeDestroyingBlock(@Nonnull LevelAccessor arg0, @Nonnull BlockPos arg1, @Nonnull BlockState arg2){
@@ -193,15 +196,15 @@ public class IPFluid extends FlowingFluid{
 			super(fluid, PROPS);
 		}
 		
-		@Override
-		public ItemStack getContainerItem(ItemStack itemStack){
-			return new ItemStack(Items.BUCKET);
-		}
+		// @Override
+		// public ItemStack getContainerItem(ItemStack itemStack){
+		// 	return new ItemStack(Items.BUCKET);
+		// }
 		
-		@Override
-		public boolean hasContainerItem(ItemStack stack){
-			return true;
-		}
+		// @Override
+		// public boolean hasContainerItem(ItemStack stack){
+		// 	return true;
+		// }
 		
 		@Override
 		public ICapabilityProvider initCapabilities(@Nonnull ItemStack stack, @Nullable CompoundTag nbt){

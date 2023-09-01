@@ -77,7 +77,7 @@ public class ProjectorEvent extends Event{
 		return multiblock;
 	}
 	
-	public Level getWorld(){
+	public Level getLevel(){
 		return this.realWorld;
 	}
 	
@@ -89,7 +89,7 @@ public class ProjectorEvent extends Event{
 		return this.rotation;
 	}
 	
-	public BlockPos getWorldPos(){
+	public BlockPos getLevelPos(){
 		return this.worldPos;
 	}
 	

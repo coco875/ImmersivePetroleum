@@ -28,7 +28,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Player;
@@ -44,9 +43,10 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.fluids.FluidAttributes;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidUtil;
 import net.minecraftforge.fluids.capability.CapabilityFluidHandler;
@@ -66,7 +66,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		}
 		
 		public Component getText(){
-			return new TranslatableComponent("desc.immersivepetroleum.info.oiltank." + getSerializedName());
+			return Component.translatable("desc.immersivepetroleum.info.oiltank." + getSerializedName());
 		}
 		
 		public PortState next(){
@@ -113,7 +113,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	 */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(2, 2, 5), new BlockPos(2, 2, 2));
 	
-	public final FluidTank tank = new FluidTank(1024 * FluidAttributes.BUCKET_VOLUME, f -> !f.getFluid().getAttributes().isGaseous());
+	public final FluidTank tank = new FluidTank(1024 * FluidType.BUCKET_VOLUME, f -> !f.getFluid().is(Tags.Fluids.GASEOUS));
 	public final EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
 	public OilTankTileEntity(BlockEntityType<OilTankTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(OilTankMultiblock.INSTANCE, type, true, pWorldPosition, pBlockState);
@@ -166,11 +166,11 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		
 		boolean wasBalancing = false;
 		if((portStateA == PortState.OUTPUT && portStateC == PortState.INPUT) || (portStateA == PortState.INPUT && portStateC == PortState.OUTPUT)){
-			wasBalancing |= equalize(Port.DYNAMIC_A, threshold, FluidAttributes.BUCKET_VOLUME);
+			wasBalancing |= equalize(Port.DYNAMIC_A, threshold, FluidType.BUCKET_VOLUME);
 		}
 		
 		if((portStateB == PortState.OUTPUT && portStateD == PortState.INPUT) || (portStateB == PortState.INPUT && portStateD == PortState.OUTPUT)){
-			wasBalancing |= equalize(Port.DYNAMIC_B, threshold, FluidAttributes.BUCKET_VOLUME);
+			wasBalancing |= equalize(Port.DYNAMIC_B, threshold, FluidType.BUCKET_VOLUME);
 		}
 		
 		if(isRSDisabled()){
@@ -310,7 +310,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 		return this.portConfig.get(port);
 	}
 	
-	static final int MAX_FLUID_IO = FluidAttributes.BUCKET_VOLUME * 10;
+	static final int MAX_FLUID_IO = FluidType.BUCKET_VOLUME * 10;
 	@Override
 	public int getMaxAcceptedFluidAmount(FluidStack resource){
 		return MAX_FLUID_IO;

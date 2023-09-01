@@ -30,7 +30,7 @@ public class GasolineBottleItem extends IPItemBase{
 	}
 	
 	@Override
-	public int getItemStackLimit(ItemStack stack){
+	public int getMaxStackSize(ItemStack stack){
 		return 16;
 	}
 	

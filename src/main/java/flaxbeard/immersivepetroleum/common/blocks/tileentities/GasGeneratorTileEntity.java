@@ -36,13 +36,13 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
@@ -136,8 +136,19 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		}
 	}
 	
+	// @Override
+	// public void readOnPlacement(LivingEntity placer, ItemStack stack){
+	// 	if(stack.hasTag()){
+	// 		CompoundTag nbt = stack.getOrCreateTag();
+			
+	// 		this.tank.readFromNBT(nbt.getCompound("tank"));
+	// 		this.energyStorage.deserializeNBT(nbt.get("energy"));
+	// 	}
+	// }
+
 	@Override
-	public void readOnPlacement(LivingEntity placer, ItemStack stack){
+	public void onBEPlaced(BlockPlaceContext ctx) {
+		ItemStack stack = ctx.getItemInHand();
 		if(stack.hasTag()){
 			CompoundTag nbt = stack.getOrCreateTag();
 			
@@ -210,7 +221,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 	private final LazyOptional<IFluidHandler> fluidHandler = CapabilityUtils.constantOptional(this.tank);
 	private final LazyOptional<IEnergyStorage> energyHandler = CapabilityUtils.constantOptional(this.energyStorage);
 	@Override
-	public <T> @Nonnull LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
+	public <T> LazyOptional<T> getCapability(@Nonnull Capability<T> cap, Direction side){
 		if(cap == CapabilityFluidHandler.FLUID_HANDLER_CAPABILITY && (side == null || side == Direction.UP)){
 			return this.fluidHandler.cast();
 		}else if(cap == CapabilityEnergy.ENERGY && (side == null || side == this.facing)){
@@ -233,7 +244,7 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			if(tank.getFluid().getAmount() > 0)
 				s = ((MutableComponent) tank.getFluid().getDisplayName()).append(": " + tank.getFluidAmount() + "mB");
 			else
-				s = new TranslatableComponent(Lib.GUI + "empty");
+				s = Component.translatable(Lib.GUI + "empty");
 			return new Component[]{s};
 		}
 		return null;

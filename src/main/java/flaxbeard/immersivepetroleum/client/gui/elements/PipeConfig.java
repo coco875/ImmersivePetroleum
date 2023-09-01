@@ -25,7 +25,6 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
 import net.minecraft.util.Mth;
@@ -59,8 +58,8 @@ public class PipeConfig extends Button{
 	protected int gridWidthScaled, gridHeightScaled;
 	protected int gridScale;
 	public PipeConfig(DerrickTileEntity tile, int x, int y, int width, int height, int gridWidth, int gridHeight, int gridScale){
-		super(x, y, width, height, TextComponent.EMPTY, NO_ACTION);
-		this.tilePos = new ColumnPos(tile.getBlockPos());
+		super(x, y, width, height, Component.nullToEmpty(null), NO_ACTION);
+		this.tilePos = new ColumnPos(tile.getBlockPos().getX(), tile.getBlockPos().getZ());
 		
 		this.grid = new Grid(gridWidth, gridHeight);
 		copyGridFrom(tile.gridStorage);
@@ -123,14 +122,14 @@ public class PipeConfig extends Button{
 							int px = gx - (this.grid.getWidth() / 2);
 							int py = gy - (this.grid.getHeight() / 2);
 							
-							ColumnPos c = new ColumnPos(this.tilePos.x + px, this.tilePos.z + py);
-							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(c.x, 0, c.z)).getY();
+							ColumnPos c = new ColumnPos(ColumnPos.getX(this.tilePos.toLong()) + px, ColumnPos.getZ(this.tilePos.toLong()) + py);
+							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(ColumnPos.getX(c.toLong()), 0, ColumnPos.getZ(c.toLong()))).getY();
 							
 							BlockPos p;
 							BlockState state;
 							do{
 								--y;
-								p = new BlockPos(c.x, y, c.z);
+								p = new BlockPos(ColumnPos.getX(c.toLong()), y, ColumnPos.getZ(c.toLong()));
 								state = world.getBlockState(p);
 							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
 							
@@ -190,7 +189,7 @@ public class PipeConfig extends Button{
 			int py = y - (this.grid.getHeight() / 2);
 			
 			if((px >= -2 && px <= 2) && (py >= -2 && py <= 2)){
-				tooltip.add(new TextComponent("Center (Derrick)"));
+				tooltip.add(Component.literal("Center (Derrick)"));
 			}else{
 				String dir = "";
 				if(py < 0){
@@ -210,20 +209,20 @@ public class PipeConfig extends Button{
 					}
 				}
 				
-				tooltip.add(new TextComponent("§n" + dir));
+				tooltip.add(Component.literal("§n" + dir));
 			}
 			
-			tooltip.add(new TextComponent(String.format(Locale.ENGLISH, "X: %d §7(%d)", (this.tilePos.x + px), px)));
-			tooltip.add(new TextComponent(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (this.tilePos.z + py), py)));
+			tooltip.add(Component.literal(String.format(Locale.ENGLISH, "X: %d §7(%d)", (ColumnPos.getX(this.tilePos.toLong()) + px), px)));
+			tooltip.add(Component.literal(String.format(Locale.ENGLISH, "Z: %d §7(%d)", (ColumnPos.getZ(this.tilePos.toLong()) + py), py)));
 			
 			int i = this.grid.get(x, y);
 			if(i > EMPTY){
 				if(i == PIPE_NORMAL){
-					tooltip.add(new TextComponent("Normal Pipe"));
+					tooltip.add(Component.literal("Normal Pipe"));
 				}else if(i == PIPE_PERFORATED){
-					tooltip.add(new TextComponent("Perforated Pipe"));
+					tooltip.add(Component.literal("Perforated Pipe"));
 				}else if(i == PIPE_PERFORATED_FIXED){
-					tooltip.add(new TextComponent("Perforated Pipe §c(Fixed)§r"));
+					tooltip.add(Component.literal("Perforated Pipe §c(Fixed)§r"));
 				}
 			}
 			

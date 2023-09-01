@@ -4,7 +4,7 @@ import javax.annotation.Nonnull;
 
 import blusunrize.immersiveengineering.common.blocks.generic.MultiblockPartBlockEntity;
 import blusunrize.immersiveengineering.common.blocks.multiblocks.IETemplateMultiblock;
-import blusunrize.immersiveengineering.common.gui.IEBaseContainer;
+import blusunrize.immersiveengineering.common.gui.IEBaseContainerOld;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.world.entity.player.Inventory;
@@ -16,7 +16,7 @@ import net.minecraft.world.phys.AABB;
 /**
  * @author TwistedGate © 2021
  */
-public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>> extends IEBaseContainer<T>{
+public class MultiblockAwareGuiContainer<T extends MultiblockPartBlockEntity<T>> extends IEBaseContainerOld<T>{
 	static final Vec3i ONE = new Vec3i(1, 1, 1);
 	
 	protected BlockPos templateSize;

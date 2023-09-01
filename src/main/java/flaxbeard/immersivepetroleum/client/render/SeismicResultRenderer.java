@@ -19,8 +19,8 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.item.ItemStack;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+// import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.event.RenderItemInFrameEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -43,15 +43,15 @@ public class SeismicResultRenderer{
 	private static final ResourceLocation OVERLAY = ResourceUtils.ip("textures/gui/seismic_overlay.png");
 	
 	@SubscribeEvent
-	public void renderGameOverlayEvent(RenderGameOverlayEvent.Post event){
+	public void renderGameOverlayEvent(RenderGuiOverlayEvent.Post event){
 		Minecraft mc = Minecraft.getInstance();
 		
-		if(mc.player != null && event.getType() == RenderGameOverlayEvent.ElementType.ALL){
+		if(mc.player != null){
 			ItemStack main = mc.player.getItemInHand(InteractionHand.MAIN_HAND);
 			ItemStack off = mc.player.getItemInHand(InteractionHand.OFF_HAND); // TODO Offhand variant?
 			
 			if((!main.isEmpty() && main.getItem() == IPContent.Items.SURVEYRESULT.get()) || (!off.isEmpty() && off.getItem() == IPContent.Items.SURVEYRESULT.get())){
-				PoseStack matrix = event.getMatrixStack();
+				PoseStack matrix = event.getPoseStack();
 				
 				int guiScaledWidth = event.getWindow().getGuiScaledWidth();
 				int guiScaledHeight = event.getWindow().getGuiScaledHeight();
@@ -181,15 +181,15 @@ public class SeismicResultRenderer{
 		}
 	}
 	
-	@SubscribeEvent
-	public void entityViewRenderEvent(EntityViewRenderEvent event){
-	}
+	// @SubscribeEvent
+	// public void entityViewRenderEvent(EntityViewRenderEvent event){
+	// }
 	
-	@SubscribeEvent
-	public void cameraSetupRenderEvent(EntityViewRenderEvent.CameraSetup event){
-	}
+	// @SubscribeEvent
+	// public void cameraSetupRenderEvent(EntityViewRenderEvent.CameraSetup event){
+	// }
 	
-	@SubscribeEvent
-	public void fieldOfViewRenderEvent(EntityViewRenderEvent.FieldOfView event){
-	}
+	// @SubscribeEvent
+	// public void fieldOfViewRenderEvent(EntityViewRenderEvent.FieldOfView event){
+	// }
 }

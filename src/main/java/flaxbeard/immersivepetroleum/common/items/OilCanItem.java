@@ -16,7 +16,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -64,10 +63,10 @@ public class OilCanItem extends IPItemBase{
 		FluidUtil.getFluidContained(stack).ifPresent(fluid -> {
 			if(!fluid.isEmpty() && fluid.getAmount() > 0){
 				Component out = ((MutableComponent) fluid.getDisplayName())
-						.append(new TextComponent(": " + fluid.getAmount() + "/8000mB")).withStyle(ChatFormatting.GRAY);
+						.append(Component.literal(": " + fluid.getAmount() + "/8000mB")).withStyle(ChatFormatting.GRAY);
 				tooltip.add(out);
 			}else{
-				tooltip.add(new TextComponent(I18n.get(Lib.DESC_FLAVOUR + "drill.empty")));
+				tooltip.add(Component.literal(I18n.get(Lib.DESC_FLAVOUR + "drill.empty")));
 			}
 		});
 	}
@@ -152,12 +151,12 @@ public class OilCanItem extends IPItemBase{
 	}
 	
 	@Override
-	public boolean hasContainerItem(ItemStack stack){
+	public boolean hasCraftingRemainingItem(ItemStack stack){
 		return ItemNBTHelper.hasKey(stack, "jerrycanDrain") || FluidUtil.getFluidContained(stack).isPresent();
 	}
 	
 	@Override
-	public ItemStack getContainerItem(ItemStack stack){
+	public ItemStack getCraftingRemainingItem(ItemStack stack){
 		if(ItemNBTHelper.hasKey(stack, "jerrycanDrain")){
 			ItemStack ret = stack.copy();
 			FluidUtil.getFluidHandler(ret).ifPresent(handler -> {

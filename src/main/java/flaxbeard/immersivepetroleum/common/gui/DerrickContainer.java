@@ -21,7 +21,7 @@ public class DerrickContainer extends MultiblockAwareGuiContainer<DerrickTileEnt
 			}
 		});
 		
-		this.slotCount = 1;
+		this.ownSlotCount = 1;
 		
 		addPlayerInventorySlots(playerInventory, 20, 82);
 		addPlayerHotbarSlots(playerInventory, 20, 140);

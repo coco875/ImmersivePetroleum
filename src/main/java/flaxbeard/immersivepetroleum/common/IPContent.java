@@ -69,6 +69,8 @@ import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
@@ -79,13 +81,16 @@ import net.minecraft.world.level.block.SlabBlock;
 import net.minecraft.world.level.block.StairBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ParticleFactoryRegisterEvent;
-import net.minecraftforge.event.RegistryEvent;
+import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.RegistryObject;
+
+// import IPFluidEntry;
 
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPContent{
@@ -263,33 +268,37 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(ExcavatorBlockEntity.class, ExcavatorLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
+	// TODO: maybe fix this?
+	// @SubscribeEvent
+	// public static void registerEntityTypes(RegisterEvent.Register<EntityType<?>> event){
+	// 	try{
+	// 		event.getRegistry().register(MotorboatEntity.TYPE);
+	// 		event.getRegistry().register(MolotovItemEntity.TYPE);
+	// 	}catch(Throwable e){
+	// 		log.error("Failed to register Speedboat Entity. {}", e.getMessage());
+	// 		throw e;
+	// 	}
+	// }
 	
-	@SubscribeEvent
-	public static void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event){
-		try{
-			event.getRegistry().register(MotorboatEntity.TYPE);
-			event.getRegistry().register(MolotovItemEntity.TYPE);
-		}catch(Throwable e){
-			log.error("Failed to register Speedboat Entity. {}", e.getMessage());
-			throw e;
-		}
-	}
+	// @SubscribeEvent
+	// public static void registerEffects(RegisterEvent.Register<MobEffect> event){
+	// 	event.getRegistry().register(IPEffects.ANTI_DISMOUNT_FIRE.get());
+	// }
 	
+	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void registerEffects(RegistryEvent.Register<MobEffect> event){
-		event.getRegistry().register(IPEffects.ANTI_DISMOUNT_FIRE.get());
+	public static void registerParticles(RegisterEvent event){
+		event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> {
+			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "flare_fire"), new SimpleParticleType(false));
+			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "fluid_spill"), new SimpleParticleType(false));
+		});
+		// event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
+		// event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
 	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
-	public static void registerParticles(RegistryEvent.Register<ParticleType<?>> event){
-		event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
-		event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
-	}
-	
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void registerParticleFactories(ParticleFactoryRegisterEvent event){
+	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
 		ParticleEngine manager = MCUtil.getParticleEngine();
 		
 		manager.register(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);

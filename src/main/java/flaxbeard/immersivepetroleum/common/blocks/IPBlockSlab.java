@@ -10,6 +10,8 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.SlabType;
 
+import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
+
 public class IPBlockSlab<B extends IPBlockBase> extends SlabBlock{
 	private final B base;
 	

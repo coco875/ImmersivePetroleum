@@ -45,7 +45,7 @@ public class DistillationTowerContainer extends MultiblockAwareGuiContainer<Dist
 		addSlot(new IPSlot.FluidContainer(this.inv, INV_2, 134, 17, FluidFilter.EMPTY));
 		addSlot(new IPSlot.ItemOutput(this.inv, INV_3, 134, 53));
 		
-		this.slotCount = 4;
+		this.ownSlotCount = 4;
 		
 		addPlayerInventorySlots(playerInventory, 8, 85);
 		addPlayerHotbarSlots(playerInventory, 8, 143);

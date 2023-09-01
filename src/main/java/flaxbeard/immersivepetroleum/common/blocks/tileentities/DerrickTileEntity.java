@@ -66,6 +66,8 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
 import net.minecraftforge.registries.ForgeRegistries;
 
+// import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity.MultiblockFace;
+
 /**
  * @author TwistedGate
  */
@@ -149,7 +151,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 		nbt.putBoolean("spilling", this.spilling);
 		nbt.putInt("timer", this.timer);
 		
-		nbt.putString("spillingfluid", this.fluidSpilled.getRegistryName().toString());
+		nbt.putString("spillingfluid", ForgeRegistries.FLUIDS.getKey(this.fluidSpilled).toString());
 		nbt.putInt("flow", getReservoirFlow());
 		
 		nbt.put("tank", this.tank.writeToNBT(new CompoundTag()));
@@ -429,7 +431,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 					continue;
 				}
 				
-				extractedAmount += island.extractWithPressure(getLevelNonnull(), cPos.x, cPos.z);
+				extractedAmount += island.extractWithPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong()));
 			}
 		}
 		

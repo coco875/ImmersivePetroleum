@@ -7,6 +7,8 @@ import javax.annotation.Nonnull;
 import blusunrize.immersiveengineering.common.util.inventory.MultiFluidTank;
 import net.minecraftforge.fluids.FluidStack;
 
+import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
+
 public class MultiFluidTankFiltered extends MultiFluidTank{
 	
 	protected Function<FluidStack, Boolean> validator;

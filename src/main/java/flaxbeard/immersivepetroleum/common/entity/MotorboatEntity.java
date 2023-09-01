@@ -83,7 +83,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				.sized(1.375F, 0.5625F)
 				.clientTrackingRange(10)
 				.build(ImmersivePetroleum.MODID + ":speedboat");
-		ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
+		// ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
 		return ret;
 	}
 	
@@ -259,7 +259,7 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 			this.entityData.set(TANK_FLUID, "");
 			this.entityData.set(TANK_AMOUNT, 0);
 		}else{
-			this.entityData.set(TANK_FLUID, stack.getFluid() == null ? "" : stack.getFluid().getRegistryName().toString());
+			this.entityData.set(TANK_FLUID, stack.getFluid() == null ? "" : ForgeRegistries.FLUIDS.getKey(stack.getFluid()).toString());
 			this.entityData.set(TANK_AMOUNT, stack.getAmount());
 		}
 	}
@@ -549,9 +549,9 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 				float moving = (this.inputUp || this.inputDown) ? (this.isBoosting ? .9F : .7F) : 0.5F;
 				if(this.lastMoving != moving){
 					this.lastMoving = moving;
-					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, false, .5f, 0.5F);
+					ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator.get(), this, false, .5f, 0.5F);
 				}
-				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator, this, this.isVehicle() && this.getContainedFluid() != FluidStack.EMPTY && this.getContainedFluid().getAmount() > 0, this.inputUp || this.inputDown ? .5f : .3f, moving);
+				ImmersivePetroleum.proxy.handleEntitySound(IESounds.dieselGenerator.get(), this, this.isVehicle() && this.getContainedFluid() != FluidStack.EMPTY && this.getContainedFluid().getAmount() > 0, this.inputUp || this.inputDown ? .5f : .3f, moving);
 				
 				if(this.inputUp && this.level.random.nextInt(2) == 0){
 					if(isInLava()){
