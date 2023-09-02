@@ -36,6 +36,7 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.Material;
+import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
@@ -77,17 +78,17 @@ public class IPFluid extends FlowingFluid{
 		this.buildAttributes = buildAttributes;
 	}
 	
-	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory){
-		return makeFluid(name, factory, IPFluidBlock::new);
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, RegistryObject<FluidType> fluid_types){
+		return makeFluid(name, factory, IPFluidBlock::new, fluid_types);
 	}
 	
-	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory){
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory, RegistryObject<FluidType> fluid_types){
 		Mutable<IPFluidEntry> entry = new MutableObject<>();
 		
 		entry.setValue(new IPFluidEntry(
 				name,
-				IPRegisters.registerFluid(name, () -> factory.apply(entry.getValue())),
-				IPRegisters.registerFluid(name+"_flowing", () -> new IPFluidFlowing(entry.getValue().still.get())),
+				IPRegisters.registerFluid(name, () -> factory.apply(entry.getValue()).setForgeFluidType(fluid_types)),
+				IPRegisters.registerFluid(name+"_flowing", () -> new IPFluidFlowing(entry.getValue().still.get()).setForgeFluidType(fluid_types)),
 				IPRegisters.registerBlock(name, () -> blockFactory.apply(entry.getValue())),
 				IPRegisters.registerItem(name+"_bucket", () -> new IPBucketItem(entry.getValue().still()))
 		));
@@ -95,7 +96,14 @@ public class IPFluid extends FlowingFluid{
 		return entry.getValue();
 	}
 	
+	private RegistryObject<FluidType> forgeFluidType;
+	
 	// TODO fix this I don't know what I'm doing
+	@Override
+	@Nonnull
+	public FluidType getFluidType(){
+		return this.forgeFluidType.get();
+	}
 	// @Override
 	// @Nonnull
 	// protected FluidType createAttributes(){
@@ -108,6 +116,12 @@ public class IPFluid extends FlowingFluid{
 		
 	// 	return builder.build(this);
 	// }
+
+
+	public IPFluid setForgeFluidType(RegistryObject<FluidType> type){
+		this.forgeFluidType = type;
+		return this;
+	}
 	
 	@Override
 	protected void beforeDestroyingBlock(@Nonnull LevelAccessor arg0, @Nonnull BlockPos arg1, @Nonnull BlockState arg2){
