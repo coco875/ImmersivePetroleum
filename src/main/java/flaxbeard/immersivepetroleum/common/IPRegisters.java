@@ -25,6 +25,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
@@ -32,6 +33,7 @@ import net.minecraftforge.registries.RegistryObject;
 public class IPRegisters{
 	private static final DeferredRegister<Block> BLOCK_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCKS, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<Item> ITEM_REGISTER = DeferredRegister.create(ForgeRegistries.ITEMS, ImmersivePetroleum.MODID);
+	private static final DeferredRegister<FluidType> FLUID_TYPES_REGISTER = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<Fluid> FLUID_REGISTER = DeferredRegister.create(ForgeRegistries.FLUIDS, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<BlockEntityType<?>> TE_REGISTER = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, ImmersivePetroleum.MODID);
 	private static final DeferredRegister<EntityType<?>> ENTITY_REGISTER = DeferredRegister.create(ForgeRegistries.ENTITY_TYPES, ImmersivePetroleum.MODID);
@@ -40,6 +42,7 @@ public class IPRegisters{
 	private static final DeferredRegister<MobEffect> MOB_EFFECT = DeferredRegister.create(ForgeRegistries.MOB_EFFECTS, ImmersivePetroleum.MODID);
 	
 	public static void addRegistersToEventBus(IEventBus eventBus){
+		FLUID_TYPES_REGISTER.register(eventBus);
 		FLUID_REGISTER.register(eventBus);
 		BLOCK_REGISTER.register(eventBus);
 		ITEM_REGISTER.register(eventBus);
@@ -76,6 +79,10 @@ public class IPRegisters{
 	
 	public static <T extends Item> RegistryObject<T> registerItem(String name, Supplier<T> itemConstructor){
 		return ITEM_REGISTER.register(name, itemConstructor);
+	}
+
+	public static <T extends FluidType> RegistryObject<T> registerFluidType(String name, Supplier<T> fluidTypeConstructor){
+		return FLUID_TYPES_REGISTER.register(name, fluidTypeConstructor);
 	}
 	
 	public static <T extends Fluid> RegistryObject<T> registerFluid(String name, Supplier<T> fluidConstructor){

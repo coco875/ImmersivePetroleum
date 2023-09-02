@@ -123,48 +123,48 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		private static final DeferredRegister<FluidType> FLUID_TYPES = DeferredRegister.create(ForgeRegistries.Keys.FLUID_TYPES, ImmersivePetroleum.MODID);
 		
-		private static final RegistryObject<FluidType> CRUDEOIL_TYPES = FLUID_TYPES.register("crudeoil", () -> new FluidType(FluidType.Properties.create()));
+		
+		private static final RegistryObject<FluidType> CRUDEOIL_TYPES = IPRegisters.registerFluidType("crudeoil", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new, CRUDEOIL_TYPES);
 
-		private static final RegistryObject<FluidType> DIESEL_SULFURL_TYPES = FLUID_TYPES.register("diesel_sulfur", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> DIESEL_SULFURL_TYPES = IPRegisters.registerFluidType("diesel_sulfur", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new, DIESEL_SULFURL_TYPES);
 		
-		private static final RegistryObject<FluidType> DIESEL_TYPES = FLUID_TYPES.register("diesel", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> DIESEL_TYPES = IPRegisters.registerFluidType("diesel", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new, DIESEL_TYPES);
 		
-		private static final RegistryObject<FluidType> LUBRICANT_TYPES = FLUID_TYPES.register("lubricant", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> LUBRICANT_TYPES = IPRegisters.registerFluidType("lubricant", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000, false), LUBRICANT_TYPES);
 		
-		private static final RegistryObject<FluidType> GASOLINE_TYPES = FLUID_TYPES.register("gasoline", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> GASOLINE_TYPES = IPRegisters.registerFluidType("gasoline", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200, false), GASOLINE_TYPES);
 		
-		private static final RegistryObject<FluidType> NAPHTHA_TYPES = FLUID_TYPES.register("naphtha", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> NAPHTHA_TYPES = IPRegisters.registerFluidType("naphtha", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750, false), NAPHTHA_TYPES);
 		
-		private static final RegistryObject<FluidType> NAPHTHA_CRACKED_TYPES = FLUID_TYPES.register("naphtha_cracked", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> NAPHTHA_CRACKED_TYPES = IPRegisters.registerFluidType("naphtha_cracked", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750, false), NAPHTHA_CRACKED_TYPES);
 		
-		private static final RegistryObject<FluidType> BENZENE_TYPES = FLUID_TYPES.register("benzene", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> BENZENE_TYPES = IPRegisters.registerFluidType("benzene", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700, false), BENZENE_TYPES);
 		
-		private static final RegistryObject<FluidType> PROPYLENE_TYPES = FLUID_TYPES.register("propylene", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> PROPYLENE_TYPES = IPRegisters.registerFluidType("propylene", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1, true), PROPYLENE_TYPES);
 		
-		private static final RegistryObject<FluidType> ETHYLENE_TYPES = FLUID_TYPES.register("ethylene", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> ETHYLENE_TYPES = IPRegisters.registerFluidType("ethylene", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1, true), ETHYLENE_TYPES);
 		
-		private static final RegistryObject<FluidType> LUBRICANT_CRACKED_TYPES = FLUID_TYPES.register("lubricant_cracked", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> LUBRICANT_CRACKED_TYPES = IPRegisters.registerFluidType("lubricant_cracked", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", e -> new IPFluid(e, 925, 1000, false), LUBRICANT_CRACKED_TYPES);
 		
-		private static final RegistryObject<FluidType> GASOLINE_CRACKED_TYPES = FLUID_TYPES.register("gasoline_cracked", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> GASOLINE_CRACKED_TYPES = IPRegisters.registerFluidType("gasoline_cracked", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", e -> new IPFluid(e, 810, 900, false), GASOLINE_CRACKED_TYPES);
 		
-		private static final RegistryObject<FluidType> KEROSENE_TYPES = FLUID_TYPES.register("kerosene", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> KEROSENE_TYPES = IPRegisters.registerFluidType("kerosene", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", e -> new IPFluid(e, 800, 900, false), KEROSENE_TYPES);
 		
-		private static final RegistryObject<FluidType> NAPALM_TYPES = FLUID_TYPES.register("napalm", () -> new FluidType(FluidType.Properties.create()));
+		private static final RegistryObject<FluidType> NAPALM_TYPES = IPRegisters.registerFluidType("napalm", () -> new FluidType(FluidType.Properties.create()));
 		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid(NAPALM_TYPES);
 		
 		private static void forceClassLoad(){
