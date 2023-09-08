@@ -28,21 +28,19 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 
-public class MolotovItemEntity extends ThrowableItemProjectile{
-	public static final EntityType<MolotovItemEntity> TYPE = createType();
-	
-	private static EntityType<MolotovItemEntity> createType(){
+public class MolotovItemEntity extends ThrowableItemProjectile{	
+	public static EntityType<MolotovItemEntity> createType(){
 		EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC).sized(0.25F, 0.25F).clientTrackingRange(4).updateInterval(10).build(ImmersivePetroleum.MODID + "molotov");
 		// ret.setRegistryName(ImmersivePetroleum.MODID, "molotov");
 		return ret;
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living){
-		this(TYPE, world, living);
+		this(IPContent.Entity.MOLOTOV.get(), world, living);
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living, double x, double y, double z){
-		this(TYPE, world, living);
+		this(IPContent.Entity.MOLOTOV.get(), world, living);
 		setPos(x, y, z);
 		this.xo = x;
 		this.yo = y;

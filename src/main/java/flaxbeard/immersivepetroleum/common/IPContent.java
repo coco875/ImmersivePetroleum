@@ -66,6 +66,7 @@ import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
+import flaxbeard.immersivepetroleum.common.util.IPEffects.IPEffect;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.client.particle.ParticleEngine;
 import net.minecraft.core.particles.ParticleType;
@@ -224,6 +225,14 @@ public class IPContent{
 		private static void forceClassLoad(){
 		}
 	}
+
+	public static class Entity{
+		public static final RegistryObject<EntityType<MotorboatEntity>> MOTORBOAT = IPRegisters.registerEntity("motorboat", () -> MotorboatEntity.createType());
+		public static final RegistryObject<EntityType<MolotovItemEntity>> MOLOTOV = IPRegisters.registerEntity("molotov", () -> MolotovItemEntity.createType());
+
+		private static void forceClassLoad(){
+		}
+	}
 	
 	public static class BoatUpgrades{
 		public static final RegistryObject<IPUpgradeItem> REINFORCED_HULL = createBoatUpgrade("reinforced_hull");
@@ -247,6 +256,7 @@ public class IPContent{
 		Fluids.forceClassLoad();
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();
+		Entity.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
 		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
