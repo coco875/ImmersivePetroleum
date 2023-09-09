@@ -23,7 +23,6 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
@@ -78,12 +77,16 @@ public class IPFluid extends FlowingFluid{
 		this.buildAttributes = buildAttributes;
 	}
 	
-	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, RegistryObject<FluidType> fluid_types){
-		return makeFluid(name, factory, IPFluidBlock::new, fluid_types);
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory){
+		return makeFluid(name, factory, IPFluidBlock::new);
 	}
 	
-	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory, RegistryObject<FluidType> fluid_types){
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory){
 		Mutable<IPFluidEntry> entry = new MutableObject<>();
+
+		FluidType.Properties properties = FluidType.Properties.create()
+					.sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+		RegistryObject<FluidType> fluid_types = IPRegisters.registerFluidType(name, () -> new FluidType(properties));
 		
 		entry.setValue(new IPFluidEntry(
 				name,
@@ -96,13 +99,13 @@ public class IPFluid extends FlowingFluid{
 		return entry.getValue();
 	}
 	
-	private RegistryObject<FluidType> forgeFluidType;
+	public static RegistryObject<FluidType> FORGEFLUIDTYPE;
 	
-	// TODO fix this I don't know what I'm doing
+	// TODO add texture
 	@Override
 	@Nonnull
 	public FluidType getFluidType(){
-		return this.forgeFluidType.get();
+		return FORGEFLUIDTYPE.get();
 	}
 	// @Override
 	// @Nonnull
@@ -119,7 +122,7 @@ public class IPFluid extends FlowingFluid{
 
 
 	public IPFluid setForgeFluidType(RegistryObject<FluidType> type){
-		this.forgeFluidType = type;
+		FORGEFLUIDTYPE = type;
 		return this;
 	}
 	

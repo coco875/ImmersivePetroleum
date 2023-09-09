@@ -3,7 +3,6 @@ package flaxbeard.immersivepetroleum.common.util.commands;
 import net.minecraft.ChatFormatting;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.Component;
 
 public class CommandUtils{
 	static void sendHelp(CommandSourceStack source, String subIdent){

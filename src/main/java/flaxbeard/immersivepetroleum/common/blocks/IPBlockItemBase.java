@@ -16,8 +16,6 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.fluids.FluidStack;
 
-import net.minecraft.world.item.Item.Properties;
-
 public class IPBlockItemBase extends BlockItem{
 	public IPBlockItemBase(Block blockIn, Properties builder){
 		super(blockIn, builder);

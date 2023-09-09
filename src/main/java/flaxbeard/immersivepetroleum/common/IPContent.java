@@ -66,13 +66,9 @@ import flaxbeard.immersivepetroleum.common.multiblocks.HydroTreaterMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
-import flaxbeard.immersivepetroleum.common.util.IPEffects.IPEffect;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
 import net.minecraft.client.particle.ParticleEngine;
-import net.minecraft.core.particles.ParticleType;
-import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -83,11 +79,9 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
-import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
@@ -124,49 +118,21 @@ public class IPContent{
 	}
 	
 	public static class Fluids{
-		
-		
-		private static final RegistryObject<FluidType> CRUDEOIL_TYPES = IPRegisters.registerFluidType("crudeoil", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new, CRUDEOIL_TYPES);
 
-		private static final RegistryObject<FluidType> DIESEL_SULFURL_TYPES = IPRegisters.registerFluidType("diesel_sulfur", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new, DIESEL_SULFURL_TYPES);
-		
-		private static final RegistryObject<FluidType> DIESEL_TYPES = IPRegisters.registerFluidType("diesel", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new, DIESEL_TYPES);
-		
-		private static final RegistryObject<FluidType> LUBRICANT_TYPES = IPRegisters.registerFluidType("lubricant", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000, false), LUBRICANT_TYPES);
-		
-		private static final RegistryObject<FluidType> GASOLINE_TYPES = IPRegisters.registerFluidType("gasoline", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200, false), GASOLINE_TYPES);
-		
-		private static final RegistryObject<FluidType> NAPHTHA_TYPES = IPRegisters.registerFluidType("naphtha", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750, false), NAPHTHA_TYPES);
-		
-		private static final RegistryObject<FluidType> NAPHTHA_CRACKED_TYPES = IPRegisters.registerFluidType("naphtha_cracked", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750, false), NAPHTHA_CRACKED_TYPES);
-		
-		private static final RegistryObject<FluidType> BENZENE_TYPES = IPRegisters.registerFluidType("benzene", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700, false), BENZENE_TYPES);
-		
-		private static final RegistryObject<FluidType> PROPYLENE_TYPES = IPRegisters.registerFluidType("propylene", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1, true), PROPYLENE_TYPES);
-		
-		private static final RegistryObject<FluidType> ETHYLENE_TYPES = IPRegisters.registerFluidType("ethylene", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1, true), ETHYLENE_TYPES);
-		
-		private static final RegistryObject<FluidType> LUBRICANT_CRACKED_TYPES = IPRegisters.registerFluidType("lubricant_cracked", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", e -> new IPFluid(e, 925, 1000, false), LUBRICANT_CRACKED_TYPES);
-		
-		private static final RegistryObject<FluidType> GASOLINE_CRACKED_TYPES = IPRegisters.registerFluidType("gasoline_cracked", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", e -> new IPFluid(e, 810, 900, false), GASOLINE_CRACKED_TYPES);
-		
-		private static final RegistryObject<FluidType> KEROSENE_TYPES = IPRegisters.registerFluidType("kerosene", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", e -> new IPFluid(e, 800, 900, false), KEROSENE_TYPES);
-		
-		private static final RegistryObject<FluidType> NAPALM_TYPES = IPRegisters.registerFluidType("napalm", () -> new FluidType(FluidType.Properties.create()));
-		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid(NAPALM_TYPES);
+		public static final IPFluidEntry CRUDEOIL = IPFluid.makeFluid("crudeoil", CrudeOilFluid::new);
+		public static final IPFluidEntry DIESEL_SULFUR = IPFluid.makeFluid("diesel_sulfur", DieselFluid::new);
+		public static final IPFluidEntry DIESEL = IPFluid.makeFluid("diesel", DieselFluid::new);
+		public static final IPFluidEntry LUBRICANT = IPFluid.makeFluid("lubricant", e -> new IPFluid(e, 925, 1000, false));
+		public static final IPFluidEntry GASOLINE = IPFluid.makeFluid("gasoline", e -> new IPFluid(e, 789, 1200, false));
+		public static final IPFluidEntry NAPHTHA = IPFluid.makeFluid("naphtha", e -> new IPFluid(e, 750, 750, false));
+		public static final IPFluidEntry NAPHTHA_CRACKED = IPFluid.makeFluid("naphtha_cracked", e -> new IPFluid(e, 750, 750, false));
+		public static final IPFluidEntry BENZENE = IPFluid.makeFluid("benzene", e -> new IPFluid(e, 876, 700, false));
+		public static final IPFluidEntry PROPYLENE = IPFluid.makeFluid("propylene", e -> new IPFluid(e, 2, 1, true));
+		public static final IPFluidEntry ETHYLENE = IPFluid.makeFluid("ethylene", e -> new IPFluid(e, 1, 1, true));
+		public static final IPFluidEntry LUBRICANT_CRACKED = IPFluid.makeFluid("lubricant_cracked", e -> new IPFluid(e, 925, 1000, false));
+		public static final IPFluidEntry KEROSENE = IPFluid.makeFluid("kerosene", e -> new IPFluid(e, 810, 900, false));
+		public static final IPFluidEntry GASOLINE_ADDITIVES = IPFluid.makeFluid("gasoline_additives", e -> new IPFluid(e, 800, 900, false));
+		public static final IPFluidEntry NAPALM = NapalmFluid.makeFluid();
 		
 		private static void forceClassLoad(){
 		}
@@ -307,22 +273,6 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(ExcavatorBlockEntity.class, ExcavatorLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
-	// TODO: maybe fix this?
-	// @SubscribeEvent
-	// public static void registerEntityTypes(RegisterEvent.Register<EntityType<?>> event){
-	// 	try{
-	// 		event.getRegistry().register(MotorboatEntity.TYPE);
-	// 		event.getRegistry().register(MolotovItemEntity.TYPE);
-	// 	}catch(Throwable e){
-	// 		log.error("Failed to register Speedboat Entity. {}", e.getMessage());
-	// 		throw e;
-	// 	}
-	// }
-	
-	// @SubscribeEvent
-	// public static void registerEffects(RegisterEvent.Register<MobEffect> event){
-	// 	event.getRegistry().register(IPEffects.ANTI_DISMOUNT_FIRE.get());
-	// }
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent

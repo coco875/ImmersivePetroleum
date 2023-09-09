@@ -23,8 +23,6 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 
-import net.minecraft.world.level.block.state.BlockBehaviour.Properties;
-
 public class ParaffinWaxBlock extends IPBlockBase{
 	
 	public ParaffinWaxBlock(){

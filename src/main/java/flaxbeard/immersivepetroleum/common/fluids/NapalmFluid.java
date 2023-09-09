@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 
 import flaxbeard.immersivepetroleum.common.CommonEventHandler;
-import flaxbeard.immersivepetroleum.common.fluids.IPFluid.IPFluidBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
@@ -16,15 +15,12 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-import net.minecraftforge.fluids.FluidType;
-import net.minecraftforge.registries.RegistryObject;
-
 public class NapalmFluid extends IPFluid{
 	public NapalmFluid(IPFluidEntry entry){
 		super(entry, 1000, 4000, false);
 	}
 	
-	public static IPFluidEntry makeFluid(RegistryObject<FluidType> fluid_types){
+	public static IPFluidEntry makeFluid(){
 		return makeFluid("napalm", NapalmFluid::new, e -> new IPFluidBlock(e){
 			@Override
 			public void onPlace(@Nonnull BlockState state, @Nonnull Level worldIn, @Nonnull BlockPos pos, @Nonnull BlockState oldState, boolean isMoving){
@@ -49,7 +45,7 @@ public class NapalmFluid extends IPFluid{
 				
 				super.neighborChanged(state, worldIn, pos, blockIn, fromPos, isMoving);
 			}
-		}, fluid_types);
+		});
 	}
 	
 	@Override
