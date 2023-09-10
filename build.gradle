@@ -1,16 +1,19 @@
 buildscript {
 	repositories {
 		maven { url = 'https://maven.minecraftforge.net' }
+		maven { url = 'https://maven.parchmentmc.org' }
 		jcenter()
 		mavenCentral()
 	}
 	dependencies {
 		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
+		classpath 'org.parchmentmc:librarian:1.+'
 	}
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
+apply plugin: 'org.parchmentmc.librarian.forgegradle'
 // sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17'
 //----------------------------------------------------------------------------------------------------------------------
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -37,7 +40,7 @@ sourceSets {
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-	mappings channel: 'official', version: "${version_minecraft}"
+	mappings channel: 'parchment', version: version_parchment
 
 	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 	
