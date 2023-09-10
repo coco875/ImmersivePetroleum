@@ -142,12 +142,12 @@ public class IslandCommand{
 			}
 		}
 		
-		final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + ColumnPos.getX(p.toLong()) + " ~ " + ColumnPos.getZ(p.toLong()));
+		final ClickEvent clickEvent = new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/tp @s " + p.x() + " ~ " + p.z());
 		final HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, Component.translatable("chat.coordinates.tooltip"));
 		
 		source.sendSuccess(Component.translatable("chat.immersivepetroleum.command.reservoir.locate",
 				closestIsland.getType().name,
-				ComponentUtils.wrapInSquareBrackets(Component.literal(ColumnPos.getX(p.toLong()) + " " + ColumnPos.getZ(p.toLong()))).withStyle((s) -> {
+				ComponentUtils.wrapInSquareBrackets(Component.literal(p.x() + " " + p.z())).withStyle((s) -> {
 					return s.withColor(ChatFormatting.GREEN)
 							.withItalic(true)
 							.withClickEvent(clickEvent)

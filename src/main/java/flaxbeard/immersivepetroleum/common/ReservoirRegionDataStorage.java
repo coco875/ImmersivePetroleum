@@ -70,8 +70,8 @@ public class ReservoirRegionDataStorage extends SavedData{
 		ListTag list = new ListTag();
 		this.regions.forEach((key, entry) -> {
 			CompoundTag tag = new CompoundTag();
-			tag.putInt("x", ColumnPos.getX(key.toLong()));
-			tag.putInt("z", ColumnPos.getZ(key.toLong()));
+			tag.putInt("x", key.x());
+			tag.putInt("z", key.z());
 			list.add(tag);
 		});
 		nbt.put("regions", list);
@@ -177,7 +177,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	}
 	
 	private ColumnPos offset(ColumnPos in, int xOff, int zOff){
-		return new ColumnPos(ColumnPos.getX(in.toLong()) + xOff, ColumnPos.getZ(in.toLong()) + zOff);
+		return new ColumnPos(in.x() + xOff, in.z() + zOff);
 	}
 	
 	/** Utility method */
@@ -189,7 +189,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 	/** Utility method */
 	public ColumnPos toRegionCoords(ColumnPos pos){
 		// 9 = SectionPos.blockToSectionCoord & ChunkPos.getRegionX
-		return new ColumnPos(ColumnPos.getX(pos.toLong()) >> 9, ColumnPos.getZ(pos.toLong()) >> 9);
+		return new ColumnPos(pos.x() >> 9, pos.z() >> 9);
 	}
 	
 	@Nullable
@@ -208,14 +208,14 @@ public class ReservoirRegionDataStorage extends SavedData{
 			String fn = getRegionFileName(p);
 			RegionData data = this.dimData.computeIfAbsent(t -> new RegionData(p, t), () -> new RegionData(p), fn);
 			setDirty();
-			log.debug("Created RegionData[{}, {}]", ColumnPos.getX(regionPos.toLong()), ColumnPos.getZ(regionPos.toLong()));
+			log.debug("Created RegionData[{}, {}]", regionPos.x(), regionPos.z());
 			return data;
 		});
 		return ret;
 	}
 	
 	private String getRegionFileName(ColumnPos regionPos){
-		return DATA_NAME + File.separatorChar + ColumnPos.getX(regionPos.toLong()) + "_" + ColumnPos.getZ(regionPos.toLong());
+		return DATA_NAME + File.separatorChar + regionPos.x() + "_" + regionPos.z();
 	}
 	
 	// -----------------------------------------------------------------------------

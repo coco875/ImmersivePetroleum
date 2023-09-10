@@ -87,8 +87,8 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 			final ListTag list = new ListTag();
 			this.tappedIslands.forEach(c -> {
 				CompoundTag pos = new CompoundTag();
-				pos.putInt("x", ColumnPos.getX(c.toLong()));
-				pos.putInt("z", ColumnPos.getZ(c.toLong()));
+				pos.putInt("x", c.x());
+				pos.putInt("z", c.z());
 				list.add(pos);
 			});
 			nbt.put("tappedislands", list);
@@ -178,7 +178,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 								ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), cPos);
 								
 								// One is enough to trigger spilling
-								if(island != null && island.getPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong())) > 0.0){
+								if(island != null && island.getPressure(getLevelNonnull(), cPos.x(), cPos.z()) > 0.0){
 									fType = island.getFluid();
 									height = result.getRight().getY();
 									spill = true;
@@ -191,7 +191,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						ColumnPos cPos = this.tappedIslands.get(0);
 						ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), cPos);
 						
-						if(island != null && island.getPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong())) > 0.0){
+						if(island != null && island.getPressure(getLevelNonnull(), cPos.x(), cPos.z()) > 0.0){
 							spill = true;
 							fType = island.getFluid();
 							height = this.worldPosition.getY() + 1;
@@ -219,7 +219,7 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						
 						if(island != null){
 							// Already unpressurized islands are left alone by default
-							island.extractWithPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong()));
+							island.extractWithPressure(getLevelNonnull(), cPos.x(), cPos.z());
 						}
 					}
 				}

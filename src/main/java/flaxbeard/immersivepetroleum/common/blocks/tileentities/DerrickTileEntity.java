@@ -431,7 +431,7 @@ public class DerrickTileEntity extends PoweredMultiblockBlockEntity<DerrickTileE
 					continue;
 				}
 				
-				extractedAmount += island.extractWithPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong()));
+				extractedAmount += island.extractWithPressure(getLevelNonnull(), cPos.x(), cPos.z());
 			}
 		}
 		

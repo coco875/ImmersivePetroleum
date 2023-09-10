@@ -123,7 +123,7 @@ public class PumpjackTileEntity extends PoweredMultiblockBlockEntity<PumpjackTil
 						for(ColumnPos cPos:well.tappedIslands){
 							ReservoirIsland island = ReservoirHandler.getIsland(this.level, cPos);
 							
-							if(island != null && island.getPressure(getLevelNonnull(), ColumnPos.getX(cPos.toLong()), ColumnPos.getZ(cPos.toLong())) > 0.0F){
+							if(island != null && island.getPressure(getLevelNonnull(), cPos.x(), cPos.z()) > 0.0F){
 								foundPressurizedIsland = true;
 								break;
 							}

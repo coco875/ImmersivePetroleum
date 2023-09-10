@@ -123,13 +123,13 @@ public class PipeConfig extends Button{
 							int py = gy - (this.grid.getHeight() / 2);
 							
 							ColumnPos c = new ColumnPos(ColumnPos.getX(this.tilePos.toLong()) + px, ColumnPos.getZ(this.tilePos.toLong()) + py);
-							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(ColumnPos.getX(c.toLong()), 0, ColumnPos.getZ(c.toLong()))).getY();
+							int y = world.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, new BlockPos(c.x(), 0, c.z())).getY();
 							
 							BlockPos p;
 							BlockState state;
 							do{
 								--y;
-								p = new BlockPos(ColumnPos.getX(c.toLong()), y, ColumnPos.getZ(c.toLong()));
+								p = new BlockPos(c.x(), y, c.z());
 								state = world.getBlockState(p);
 							}while(state.getMapColor(world, p) == MaterialColor.NONE && y > 0);
 							

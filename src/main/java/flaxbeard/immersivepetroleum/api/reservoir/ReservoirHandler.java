@@ -272,8 +272,8 @@ public class ReservoirHandler{
 		poly.forEach(pos -> {
 			for(int z = -1;z <= 1;z++){
 				for(int x = -1;x <= 1;x++){
-					int x_pos = ColumnPos.getX(pos.toLong());
-					int z_pos = ColumnPos.getZ(pos.toLong());
+					int x_pos = pos.x();
+					int z_pos = pos.z();
 					if(ReservoirHandler.getValueOf(world, x_pos + 1, z_pos) == -1){
 						ColumnPos p = new ColumnPos(x_pos + 1, z_pos);
 						set.add(p);
@@ -341,7 +341,7 @@ public class ReservoirHandler{
 					int index = (startIndex + j) % list.size();
 					ColumnPos pos = list.get(index);
 					
-					if(ColumnPos.getZ(startPos.toLong()) != ColumnPos.getZ(pos.toLong())){
+					if(startPos.z() != pos.z()){
 						break;
 					}
 					
@@ -356,7 +356,7 @@ public class ReservoirHandler{
 					int index = (startIndex + j) % list.size();
 					ColumnPos pos = list.get(index);
 					
-					if(ColumnPos.getX(startPos.toLong()) != ColumnPos.getX(pos.toLong())){
+					if(startPos.x() != pos.x()){
 						break;
 					}
 					
@@ -373,8 +373,8 @@ public class ReservoirHandler{
 					int index = (startIndex + j) % list.size();
 					ColumnPos pos = list.get(index);
 					
-					int dx = Math.abs(ColumnPos.getX(pos.toLong()) - ColumnPos.getX(startPos.toLong()));
-					int dz = Math.abs(ColumnPos.getZ(pos.toLong()) - ColumnPos.getZ(startPos.toLong()));
+					int dx = Math.abs(pos.x() - startPos.x());
+					int dz = Math.abs(pos.z() - startPos.z());
 					
 					if(dx != dz){
 						break;
@@ -414,8 +414,8 @@ public class ReservoirHandler{
 	
 	private static boolean moveNext(ColumnPos pos, List<ColumnPos> src, List<ColumnPos> dst){
 		// X Z axis biased
-		int x_pos = ColumnPos.getX(pos.toLong());
-		int z_pos = ColumnPos.getZ(pos.toLong());
+		int x_pos = pos.x();
+		int z_pos = pos.z();
 		ColumnPos p0 = new ColumnPos(x_pos + 1, z_pos);
 		ColumnPos p1 = new ColumnPos(x_pos - 1, z_pos);
 		ColumnPos p2 = new ColumnPos(x_pos, z_pos + 1);
@@ -426,8 +426,8 @@ public class ReservoirHandler{
 		}
 		
 		// Diagonals
-		x_pos = ColumnPos.getX(pos.toLong());
-		z_pos = ColumnPos.getZ(pos.toLong());
+		x_pos = pos.x();
+		z_pos = pos.z();
 		ColumnPos p4 = new ColumnPos(x_pos - 1, z_pos - 1);
 		ColumnPos p5 = new ColumnPos(x_pos - 1, z_pos + 1);
 		ColumnPos p6 = new ColumnPos(x_pos + 1, z_pos - 1);
