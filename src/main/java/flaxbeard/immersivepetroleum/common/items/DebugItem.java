@@ -19,7 +19,6 @@ import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import flaxbeard.immersivepetroleum.common.network.IPPacketHandler;
 import flaxbeard.immersivepetroleum.common.network.MessageDebugSync;
-import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;

@@ -287,26 +287,26 @@ public class IPContent{
 //		}
 	}
 	*/
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void registerParticles(RegisterEvent event){
-		event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> {
-			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "flare_fire"), IPParticleTypes.FLARE_FIRE.get());
-			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "fluid_spill"), IPParticleTypes.FLUID_SPILL.get());
-		});
-		// event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
-		// event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
-	}
+	// @OnlyIn(Dist.CLIENT)
+	// @SubscribeEvent
+	// public static void registerParticles(RegisterEvent event){
+	// 	event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> {
+	// 		helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "flare_fire"), IPParticleTypes.FLARE_FIRE.get());
+	// 		helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "fluid_spill"), IPParticleTypes.FLUID_SPILL.get());
+	// 	});
+	// 	// event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
+	// 	// event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
+	// }
 	
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void registerParticleFactories(RegisterParticleProvidersEvent event){
-		// FIXME Guess this aint the place for these
-		//event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
-		//event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
-		ParticleEngine manager = MCUtil.getParticleEngine();
+	// @OnlyIn(Dist.CLIENT)
+	// @SubscribeEvent
+	// public static void registerParticleFactories(RegisterParticleProvidersEvent event){
+	// 	// FIXME Guess this aint the place for these
+	// 	//event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
+	// 	//event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
+	// 	ParticleEngine manager = MCUtil.getParticleEngine();
 		
-		manager.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
-		manager.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
-	}
+	// 	manager.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
+	// 	manager.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
+	// }
 }

@@ -341,7 +341,7 @@ public class IPFluid extends FlowingFluid{
 		}
 		
 		public static <S extends StateHolder<?, S>, P extends Comparable<P>> S copyValue(Property<P> prop, S oldState, StateHolder<?, ?> from){
-			return oldState.setValue(prop, from.getValue(prop));
+			return oldState.setValue(prop, oldState.getValue(prop));
 		}
 	}
 	
