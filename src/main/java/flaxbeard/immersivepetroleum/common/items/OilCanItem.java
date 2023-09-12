@@ -150,14 +150,13 @@ public class OilCanItem extends IPItemBase{
 			return InteractionResult.FAIL;
 	}
 	
-	// TODO Where'd container item stuff go?!
-	//@Override
-	public boolean hasContainerItem(ItemStack stack){
+	@Override
+	public boolean hasCraftingRemainingItem(ItemStack stack){
 		return ItemNBTHelper.hasKey(stack, "jerrycanDrain") || FluidUtil.getFluidContained(stack).isPresent();
 	}
 	
-	//@Override
-	public ItemStack getContainerItem(ItemStack stack){
+	@Override
+	public ItemStack getCraftingRemainingItem(ItemStack stack){
 		if(ItemNBTHelper.hasKey(stack, "jerrycanDrain")){
 			ItemStack ret = stack.copy();
 			FluidUtil.getFluidHandler(ret).ifPresent(handler -> {

@@ -1,5 +1,7 @@
 package flaxbeard.immersivepetroleum.common.world;
 
+import java.util.Random;
+
 import com.google.common.collect.HashMultimap;
 
 import flaxbeard.immersivepetroleum.api.reservoir.ReservoirHandler;
@@ -31,7 +33,7 @@ public class FeatureReservoir extends Feature<NoneFeatureConfiguration>{
 		if(!generatedReservoirChunks.containsEntry(dimension, chunk.getPos())){
 			generatedReservoirChunks.put(dimension, chunk.getPos());
 			
-			ReservoirHandler.scanChunkForNewReservoirs(reader.getLevel(), chunk.getPos(), pContext.random());
+			ReservoirHandler.scanChunkForNewReservoirs(reader.getLevel(), chunk.getPos(), (Random) pContext.random());
 			return true;
 		}
 		return false;

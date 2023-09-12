@@ -80,14 +80,13 @@ import net.minecraftforge.registries.RegistryObject;
 
 public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	
-	public static final RegistryObject<EntityType<MotorboatEntity>> TYPE = createType();
-	
-	private static RegistryObject<EntityType<MotorboatEntity>> createType(){
+	public static EntityType<MotorboatEntity> createType(){
 		EntityType<MotorboatEntity> ret = EntityType.Builder.<MotorboatEntity> of(MotorboatEntity::new, MobCategory.MISC)
 				.sized(1.375F, 0.5625F)
 				.clientTrackingRange(10)
 				.build(ResourceUtils.ip("speedboat").toString());
-		return IPRegisters.registerEntityType("speedboat", () -> ret);
+		// ret.setRegistryName(ImmersivePetroleum.MODID, "speedboat");
+		return ret;
 	}
 	
 	public static EntityDataAccessor<Byte> getFlags(){
@@ -118,11 +117,11 @@ public class MotorboatEntity extends Boat implements IEntityAdditionalSpawnData{
 	public float propellerXRotSpeed = 0.0F;
 	
 	public MotorboatEntity(Level world){
-		this(TYPE.get(), world);
+		this(IPContent.Entity.MOTORBOAT.get(), world);
 	}
 	
 	public MotorboatEntity(Level world, double x, double y, double z){
-		this(TYPE.get(), world);
+		this(IPContent.Entity.MOTORBOAT.get(), world);
 		setPos(x, y, z);
 		this.xo = x;
 		this.yo = y;

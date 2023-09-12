@@ -23,6 +23,7 @@ import net.minecraft.world.level.storage.loot.functions.SetItemCountFunction;
 import net.minecraft.world.level.storage.loot.predicates.ExplosionCondition;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class IPBlockLoot implements Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>{
 	private BiConsumer<ResourceLocation, LootTable.Builder> out;

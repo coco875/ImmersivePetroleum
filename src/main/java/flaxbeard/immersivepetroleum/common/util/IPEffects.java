@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import flaxbeard.immersivepetroleum.common.IPRegisters;
 import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import net.minecraft.client.gui.screens.inventory.EffectRenderingInventoryScreen;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectCategory;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -37,6 +38,11 @@ public class IPEffects{
 				
 				@Override
 				public boolean isVisibleInInventory(MobEffectInstance instance){
+					return false;
+				}
+				
+				@Override
+				public boolean renderInventoryText(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen, PoseStack poseStack, int x, int y, int blitOffset){
 					return false;
 				}
 			});

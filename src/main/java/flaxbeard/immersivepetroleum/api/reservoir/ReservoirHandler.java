@@ -21,6 +21,7 @@ import flaxbeard.immersivepetroleum.common.ReservoirRegionDataStorage.RegionData
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.Utils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ColumnPos;
@@ -65,7 +66,8 @@ public class ReservoirHandler{
 				
 				if(ReservoirHandler.getValueOf(world, x, z) > -1){
 					// Getting the biome now to prevent lockups
-					ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(new BlockPos(x, 64, z)).value());
+					// ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(new BlockPos(x, 64, z)).value());
+					ResourceLocation biomeRL = world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(world.getBiome(new BlockPos(x, 64, z)).value());
 					
 					final ColumnPos current = new ColumnPos(x, z);
 					if(storage.existsAt(current)){

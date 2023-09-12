@@ -49,10 +49,12 @@ import net.minecraft.world.level.material.FlowingFluid;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.common.SoundActions;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.fluids.FluidType;
 import net.minecraftforge.fluids.capability.wrappers.FluidBucketWrapper;
 import net.minecraftforge.registries.RegistryObject;
+
 
 public class IPFluid extends FlowingFluid{
 	public static final List<IPFluidEntry> FLUIDS = new ArrayList<>();
@@ -81,16 +83,65 @@ public class IPFluid extends FlowingFluid{
 	}
 	
 	protected final IPFluidEntry entry;
+
 	protected IPFluid(IPFluidEntry entry){
 		this.entry = entry;
 	}
 	
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory){
+		return makeFluid(name, factory, IPFluidBlock::new);
+	}
+	
+	public static IPFluidEntry makeFluid(String name, Function<IPFluidEntry, IPFluid> factory, Function<IPFluidEntry, Block> blockFactory){
+		Mutable<IPFluidEntry> entry = new MutableObject<>();
+
+		FluidType.Properties properties = FluidType.Properties.create()
+					.sound(SoundActions.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+		RegistryObject<FluidType> fluid_types = IPRegisters.registerFluidType(name, () -> new FluidType(properties));
+		
+		entry.setValue(new IPFluidEntry(
+				name,
+				IPRegisters.registerFluid(name, () -> factory.apply(entry.getValue()).setForgeFluidType(fluid_types)),
+				IPRegisters.registerFluid(name+"_flowing", () -> new IPFluidFlowing(entry.getValue().still.get()).setForgeFluidType(fluid_types)),
+				IPRegisters.registerBlock(name, () -> blockFactory.apply(entry.getValue())),
+				IPRegisters.registerItem(name+"_bucket", () -> new IPBucketItem(entry.getValue().still()))
+		));
+		FLUIDS.add(entry.getValue());
+		return entry.getValue();
+	}
+	
+	public static RegistryObject<FluidType> FORGEFLUIDTYPE;
+	
+	// TODO add texture
 	@Override
 	protected void createFluidStateDefinition(Builder<Fluid, FluidState> builder){
 		super.createFluidStateDefinition(builder);
 		for(Property<?> p:(entry == null ? staticEntry : entry).properties()){
 			builder.add(p);
 		}
+	}
+
+	@Nonnull
+	public FluidType getFluidType(){
+		return FORGEFLUIDTYPE.get();
+	}
+	// @Override
+	// @Nonnull
+	// protected FluidType createAttributes(){
+	// 	FluidType.Properties builder = FluidType.builder(this.stillTexture, this.flowingTexture)
+	// 			.overlay(this.stillTexture)
+	// 			.sound(SoundEvents.BUCKET_FILL, SoundEvents.BUCKET_EMPTY);
+		
+	// 	if(this.buildAttributes != null)
+	// 		this.buildAttributes.accept(builder);
+		
+	// 	return builder.build(this);
+	// }
+
+
+	public IPFluid setForgeFluidType(RegistryObject<FluidType> type){
+		FORGEFLUIDTYPE = type;
+		return this;
 	}
 	
 	@Override

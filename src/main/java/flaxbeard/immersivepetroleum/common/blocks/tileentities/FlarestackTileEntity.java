@@ -137,7 +137,7 @@ public class FlarestackTileEntity extends IPTileEntityBase implements IPCommonTi
 	
 	@Override
 	public void tickClient(){
-		ImmersiveEngineering.proxy.handleTileSound(IPSounds.FLARESTACK, this, this.isActive, 1.0F, 0.75F);
+		ImmersiveEngineering.proxy.handleTileSound(() -> IPSounds.FLARESTACK, (BlockEntity) this, this.isActive, 1.0F, 0.75F);
 		if(this.isActive){
 			if(this.level.getGameTime() % 2 == 0){
 				float xPos = (this.worldPosition.getX() + 0.50F) + (this.level.random.nextFloat() - 0.5F) * .4375F;

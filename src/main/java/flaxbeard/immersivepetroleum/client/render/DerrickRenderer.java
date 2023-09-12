@@ -12,6 +12,7 @@ import com.mojang.math.Quaternion;
 import com.mojang.math.Vector3f;
 
 import blusunrize.immersiveengineering.api.ApiUtils;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 import flaxbeard.immersivepetroleum.common.blocks.tileentities.DerrickTileEntity;
 import flaxbeard.immersivepetroleum.common.util.ResourceUtils;
@@ -21,12 +22,23 @@ import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.client.event.ModelEvent;
 import net.minecraftforge.client.model.data.ModelData;
+import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.api.distmarker.Dist;
 
+@OnlyIn(Dist.CLIENT)
+@Mod.EventBusSubscriber(value = Dist.CLIENT, modid = ImmersivePetroleum.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class DerrickRenderer implements BlockEntityRenderer<DerrickTileEntity>{
 	
 	static final ResourceLocation DERRICK_PIPE_RL = ResourceUtils.ip("multiblock/dyn/derrick_pipe");
 	static final Function<ResourceLocation, BakedModel> f = rl -> MCUtil.getBlockRenderer().getBlockModelShaper().getModelManager().getModel(rl);
+	
+	/* Called from ClientProxy during ModelEvent.RegisterGeometryLoaders */
+	public static void init(ModelEvent.RegisterAdditional event){
+		event.register(DERRICK_PIPE_RL);
+	}
 	
 	@Override
 	public boolean shouldRenderOffScreen(@Nonnull DerrickTileEntity te){

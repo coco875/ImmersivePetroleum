@@ -10,9 +10,8 @@ import flaxbeard.immersivepetroleum.client.render.MultiblockDistillationTowerRen
 import flaxbeard.immersivepetroleum.client.render.MultiblockPumpjackRenderer;
 import flaxbeard.immersivepetroleum.client.render.OilTankRenderer;
 import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
+import flaxbeard.immersivepetroleum.common.IPContent;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
-import flaxbeard.immersivepetroleum.common.entity.MolotovItemEntity;
-import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.ThrownItemRenderer;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -36,12 +35,12 @@ public class ClientModBusEventHandlers{
 		registerBERender(ev, IPTileTypes.AUTOLUBE.get(), AutoLubricatorRenderer::new);
 		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
 		
-		registerBERender(ev, IPTileTypes.SEISMIC_SURVEY.get(), SeismicSurveyBarrelRenderer::new);
-		registerBERender(ev, IPTileTypes.DERRICK.master(), DerrickRenderer::new);
-		
 		// FIXME Guess this is not the place for these..
 		//ev.registerEntityRenderer(MotorboatEntity.TYPE.get(), MotorboatRenderer::new);
 		//ev.registerEntityRenderer(MolotovItemEntity.TYPE.get(), ThrownItemRenderer::new);
+
+		ev.registerEntityRenderer(IPContent.Entity.MOTORBOAT.get(), MotorboatRenderer::new);
+		ev.registerEntityRenderer(IPContent.Entity.MOLOTOV.get(), ThrownItemRenderer::new);
 	}
 	
 	private static <T extends BlockEntity> void registerBERender(RegisterRenderers ev, BlockEntityType<T> type, Supplier<BlockEntityRenderer<T>> factory){

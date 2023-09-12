@@ -13,6 +13,7 @@ import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fml.event.config.ModConfigEvent;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class FuelHandler{
 	protected static final Logger log = LogManager.getLogger(ImmersivePetroleum.MODID + "/FuelHandler");

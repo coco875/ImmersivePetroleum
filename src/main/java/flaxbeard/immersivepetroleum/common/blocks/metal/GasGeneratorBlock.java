@@ -3,6 +3,7 @@ package flaxbeard.immersivepetroleum.common.blocks.metal;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlacementInteraction;
 import blusunrize.immersiveengineering.common.blocks.IEBlockInterfaces.IPlayerInteraction;
 import flaxbeard.immersivepetroleum.common.IPTileTypes;
 import flaxbeard.immersivepetroleum.common.blocks.IPBlockBase;

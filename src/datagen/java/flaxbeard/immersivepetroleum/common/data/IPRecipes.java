@@ -48,8 +48,10 @@ import net.minecraft.world.level.ItemLike;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.common.crafting.conditions.ModLoadedCondition;
 import net.minecraftforge.fluids.FluidType;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.fluids.FluidStack;
 
 public class IPRecipes extends RecipeProvider{
 	private final Map<String, Integer> PATH_COUNT = new HashMap<>();

@@ -56,6 +56,9 @@ import net.minecraftforge.fluids.capability.IFluidHandler.FluidAction;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+// import BEContainerIP;
+// import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity.MultiblockFace;
+
 public class DistillationTowerTileEntity extends PoweredMultiblockBlockEntity<DistillationTowerTileEntity, DistillationTowerRecipe> implements IPCommonTickableTile, IPMenuProvider<DistillationTowerTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Input Tank ID */
 	public static final int TANK_INPUT = 0;

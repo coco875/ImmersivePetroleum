@@ -21,6 +21,7 @@ import net.minecraftforge.client.model.generators.ModelProvider;
 import net.minecraftforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
 import net.minecraftforge.client.model.generators.loaders.ObjModelBuilder;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
 public class IPItemModels extends ModelProvider<TRSRModelBuilder>{

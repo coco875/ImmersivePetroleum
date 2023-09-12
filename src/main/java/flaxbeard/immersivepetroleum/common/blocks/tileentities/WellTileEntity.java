@@ -66,9 +66,9 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 	@Override
 	protected void writeCustom(CompoundTag nbt){
 		nbt.putBoolean("spill", this.spill);
-		nbt.putInt("flow", ReservoirHandler.getIsland(getWorldNonnull(), getBlockPos()) == null ? 0 :
-			ReservoirIsland.getFlow(ReservoirHandler.getIsland(getWorldNonnull(),
-				getBlockPos()).getPressure(getWorldNonnull(),
+		nbt.putInt("flow", ReservoirHandler.getIsland(getLevelNonnull(), getBlockPos()) == null ? 0 :
+			ReservoirIsland.getFlow(ReservoirHandler.getIsland(getLevelNonnull(),
+				getBlockPos()).getPressure(getLevelNonnull(),
 				getBlockPos().getX(), getBlockPos().getZ())));
 		
 		nbt.putBoolean("drillingcompleted", this.drillingCompleted);
@@ -157,29 +157,29 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 		if(this.drillingCompleted){
 			if(this.tappedIslands.size() > 0){
 				for(ColumnPos cPos:this.tappedIslands){
-					ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
-					if(island != null && island.belowHydrostaticEquilibrium(getWorldNonnull())){
-						island.equalizeHydrostaticPressure(getWorldNonnull());
+					ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), cPos);
+					if(island != null && island.belowHydrostaticEquilibrium(getLevelNonnull())){
+						island.equalizeHydrostaticPressure(getLevelNonnull());
 					}
 				}
 				
-				if(this.getWorldNonnull().getGameTime() % 5 == 0){
+				if(this.getLevelNonnull().getGameTime() % 5 == 0){
 					boolean spill = false;
 					
 					int height = -1;
 					Fluid fType = Fluids.EMPTY;
 					
-					BlockEntity teHigh = getWorldNonnull().getBlockEntity(getBlockPos().above());
+					BlockEntity teHigh = getLevelNonnull().getBlockEntity(getBlockPos().above());
 					if(teHigh instanceof WellPipeTileEntity well){
 						Pair<Boolean, BlockPos> result = well.hasValidConnection();
 						
 						// Don't stop spilling even if the pumpjack is ontop, because it is "not designed" to handle the high pressure
-						if(!result.getLeft() || getWorldNonnull().getBlockEntity(result.getRight()) instanceof PumpjackTileEntity){
+						if(!result.getLeft() || getLevelNonnull().getBlockEntity(result.getRight()) instanceof PumpjackTileEntity){
 							for(ColumnPos cPos:this.tappedIslands){
-								ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+								ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), cPos);
 								
 								// One is enough to trigger spilling
-								if(island != null && island.getPressure(getWorldNonnull(), cPos.x(), cPos.z()) > 0.0){
+								if(island != null && island.getPressure(getLevelNonnull(), cPos.x(), cPos.z()) > 0.0){
 									fType = island.getFluid();
 									height = result.getRight().getY();
 									spill = true;
@@ -190,9 +190,9 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						
 					}else{
 						ColumnPos cPos = this.tappedIslands.get(0);
-						ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+						ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), cPos);
 						
-						if(island != null && island.getPressure(getWorldNonnull(), cPos.x(), cPos.z()) > 0.0){
+						if(island != null && island.getPressure(getLevelNonnull(), cPos.x(), cPos.z()) > 0.0){
 							spill = true;
 							fType = island.getFluid();
 							height = this.worldPosition.getY() + 1;
@@ -216,11 +216,11 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 				
 				if(this.spill){
 					for(ColumnPos cPos:this.tappedIslands){
-						ReservoirIsland island = ReservoirHandler.getIsland(getWorldNonnull(), cPos);
+						ReservoirIsland island = ReservoirHandler.getIsland(getLevelNonnull(), cPos);
 						
 						if(island != null){
 							// Already unpressurized islands are left alone by default
-							island.extractWithPressure(getWorldNonnull(), cPos.x(), cPos.z());
+							island.extractWithPressure(getLevelNonnull(), cPos.x(), cPos.z());
 						}
 					}
 				}
@@ -233,15 +233,15 @@ public class WellTileEntity extends IPTileEntityBase implements IPCommonTickable
 						BlockPos pos = getBlockPos();
 						pos = new BlockPos(pos.getX(), integer, pos.getZ());
 						
-						BlockState state = getWorldNonnull().getBlockState(pos);
+						BlockState state = getLevelNonnull().getBlockState(pos);
 						
 						if(state.getBlock() instanceof WellPipeBlock){
-							getWorldNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
+							getLevelNonnull().setBlockAndUpdate(pos, state.setValue(WellPipeBlock.BROKEN, true));
 						}
 					}
 				}
 				
-				getWorldNonnull().setBlockAndUpdate(getBlockPos(), Blocks.BEDROCK.defaultBlockState());
+				getLevelNonnull().setBlockAndUpdate(getBlockPos(), Blocks.BEDROCK.defaultBlockState());
 			}
 		}
 	}

@@ -30,24 +30,23 @@ import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.RegistryObject;
 
-public class MolotovItemEntity extends ThrowableItemProjectile{
-	public static final RegistryObject<EntityType<MolotovItemEntity>> TYPE = createType();
-	
-	private static RegistryObject<EntityType<MolotovItemEntity>> createType(){
+public class MolotovItemEntity extends ThrowableItemProjectile{	
+	public static EntityType<MolotovItemEntity> createType(){
 		EntityType<MolotovItemEntity> ret = EntityType.Builder.<MolotovItemEntity> of(MolotovItemEntity::new, MobCategory.MISC)
 				.sized(0.25F, 0.25F)
 				.clientTrackingRange(4)
 				.updateInterval(10)
-				.build(ResourceUtils.ip("molotov").toString());
-		return IPRegisters.registerEntityType("molotov", () -> ret);
+				.build(ImmersivePetroleum.MODID + "molotov");
+		// ret.setRegistryName(ImmersivePetroleum.MODID, "molotov");
+		return ret;
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living){
-		this(TYPE.get(), world, living);
+		this(IPContent.Entity.MOLOTOV.get(), world, living);
 	}
 	
 	public MolotovItemEntity(Level world, LivingEntity living, double x, double y, double z){
-		this(TYPE.get(), world, living);
+		this(IPContent.Entity.MOLOTOV.get(), world, living);
 		setPos(x, y, z);
 		this.xo = x;
 		this.yo = y;

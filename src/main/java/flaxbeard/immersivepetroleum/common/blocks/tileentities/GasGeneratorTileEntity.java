@@ -141,8 +141,19 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 		// May need to call readOnPlacement here
 	}
 	
+	// @Override
+	// public void readOnPlacement(LivingEntity placer, ItemStack stack){
+	// 	if(stack.hasTag()){
+	// 		CompoundTag nbt = stack.getOrCreateTag();
+			
+	// 		this.tank.readFromNBT(nbt.getCompound("tank"));
+	// 		this.energyStorage.deserializeNBT(nbt.get("energy"));
+	// 	}
+	// }
+
 	@Override
-	public void readOnPlacement(LivingEntity placer, ItemStack stack){
+	public void onBEPlaced(BlockPlaceContext ctx) {
+		ItemStack stack = ctx.getItemInHand();
 		if(stack.hasTag()){
 			CompoundTag nbt = stack.getOrCreateTag();
 			

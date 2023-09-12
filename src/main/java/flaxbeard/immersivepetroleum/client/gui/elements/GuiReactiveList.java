@@ -25,6 +25,8 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
+import net.minecraft.client.gui.components.Button.OnPress;
+
 @SuppressWarnings("unused")
 public class GuiReactiveList extends Button{
 	private final Screen gui;

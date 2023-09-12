@@ -50,6 +50,9 @@ import net.minecraftforge.fluids.capability.templates.FluidTank;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
 
+// import BEContainerIP;
+// import blusunrize.immersiveengineering.common.blocks.generic.PoweredMultiblockBlockEntity.MultiblockFace;
+
 public class HydrotreaterTileEntity extends PoweredMultiblockBlockEntity<HydrotreaterTileEntity, HighPressureRefineryRecipe> implements IPCommonTickableTile, IPMenuProvider<HydrotreaterTileEntity>, IEBlockInterfaces.IBlockBounds{
 	/** Primary Fluid Input Tank<br> */
 	public static final int TANK_INPUT_A = 0;

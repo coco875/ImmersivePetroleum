@@ -24,6 +24,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.registries.ForgeRegistries;
 
 @OnlyIn(Dist.CLIENT)
 public class IPEntitySound implements TickableSoundInstance{
@@ -39,7 +40,7 @@ public class IPEntitySound implements TickableSoundInstance{
 	public boolean canRepeat;
 	public int repeatDelay;
 	public float volumeAjustment = 1;
-	
+
 	public IPEntitySound(SoundEvent event, float volume, float pitch, boolean repeat, int repeatDelay, Entity e, Attenuation attenuation, SoundSource category){
 		this(RegistryUtils.getRegistryNameOf(event), volume, pitch, repeat, repeatDelay, e, attenuation, category);
 	}

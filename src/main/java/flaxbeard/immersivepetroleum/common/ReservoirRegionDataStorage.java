@@ -96,7 +96,7 @@ public class ReservoirRegionDataStorage extends SavedData{
 		log.debug("Loaded regions file.");
 	}
 	
-	/** Marks itself and all regions as dirty. (Only to be used by {@link CommonEventHandler#onUnload(net.minecraftforge.event.world.WorldEvent.Unload)}) */
+	/** Marks itself and all regions as dirty. (Only to be used by {@link CommonEventHandler#onUnload(net.minecraftforge.event.world.LevelEvent.Unload)}) */
 	public void markAllDirty(){
 		setDirty();
 		this.regions.values().forEach(RegionData::setDirty);

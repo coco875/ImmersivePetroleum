@@ -15,7 +15,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.FireBlock;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
-
 public class NapalmFluid extends IPFluid{
 	
 	public static IPFluidEntry makeFluid(){

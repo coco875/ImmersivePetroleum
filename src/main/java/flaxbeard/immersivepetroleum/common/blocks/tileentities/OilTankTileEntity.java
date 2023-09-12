@@ -43,6 +43,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -112,7 +113,7 @@ public class OilTankTileEntity extends MultiblockPartBlockEntity<OilTankTileEnti
 	 */
 	public static final Set<BlockPos> Redstone_IN = ImmutableSet.of(new BlockPos(2, 2, 5), new BlockPos(2, 2, 2));
 	
-	public final FluidTank tank = new FluidTank(1024 * FluidType.BUCKET_VOLUME/*, f -> !f.getFluid().getAttributes().isGaseous()*/);
+	public final FluidTank tank = new FluidTank(1024 * FluidType.BUCKET_VOLUME/*, f -> !f.getFluid().is(Tags.Fluids.GASEOUS)*/);
 	public final EnumMap<Port, PortState> portConfig = new EnumMap<>(Port.class);
 	public OilTankTileEntity(BlockEntityType<OilTankTileEntity> type, BlockPos pWorldPosition, BlockState pBlockState){
 		super(OilTankMultiblock.INSTANCE, type, true, pWorldPosition, pBlockState);

@@ -23,6 +23,7 @@ import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
@@ -214,7 +215,8 @@ public class DebugItem extends IPItemBase{
 					BlockPos pos = context.getClickedPos();
 					
 					ResourceLocation dimensionRL = world.dimension().location();
-					ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(pos).value());
+					// ResourceLocation biomeRL = RegistryUtils.getRegistryNameOf(world.getBiome(pos).value());
+					ResourceLocation biomeRL = world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(world.getBiome(pos).value());
 					
 					player.displayClientMessage(Component.literal(dimensionRL.toString()), false);
 					

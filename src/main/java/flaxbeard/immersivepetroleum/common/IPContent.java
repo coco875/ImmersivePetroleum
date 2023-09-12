@@ -64,6 +64,9 @@ import flaxbeard.immersivepetroleum.common.multiblocks.OilTankMultiblock;
 import flaxbeard.immersivepetroleum.common.multiblocks.PumpjackMultiblock;
 import flaxbeard.immersivepetroleum.common.util.IPEffects;
 import flaxbeard.immersivepetroleum.common.world.IPWorldGen;
+import net.minecraft.client.particle.ParticleEngine;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -73,11 +76,15 @@ import net.minecraft.world.level.block.StairBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RegisterParticleProvidersEvent;
+import net.minecraftforge.registries.ForgeRegistries;
+import net.minecraftforge.registries.RegisterEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.RegistryObject;
+
+// import IPFluidEntry;
 
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, bus = Bus.MOD)
 public class IPContent{
@@ -182,6 +189,14 @@ public class IPContent{
 		private static void forceClassLoad(){
 		}
 	}
+
+	public static class Entity{
+		public static final RegistryObject<EntityType<MotorboatEntity>> MOTORBOAT = IPRegisters.registerEntity("motorboat", () -> MotorboatEntity.createType());
+		public static final RegistryObject<EntityType<MolotovItemEntity>> MOLOTOV = IPRegisters.registerEntity("molotov", () -> MolotovItemEntity.createType());
+
+		private static void forceClassLoad(){
+		}
+	}
 	
 	public static class BoatUpgrades{
 		public static final RegistryObject<IPUpgradeItem> REINFORCED_HULL = createBoatUpgrade("reinforced_hull");
@@ -205,6 +220,7 @@ public class IPContent{
 		Fluids.forceClassLoad();
 		Blocks.forceClassLoad();
 		Items.forceClassLoad();
+		Entity.forceClassLoad();
 		BoatUpgrades.forceClassLoad();
 		Multiblock.forceClassLoad();
 		IPMenuTypes.forceClassLoad();
@@ -255,7 +271,7 @@ public class IPContent{
 		LubricatedHandler.registerLubricatedTile(ExcavatorBlockEntity.class, ExcavatorLubricationHandler::new);
 		LubricatedHandler.registerLubricatedTile(CrusherBlockEntity.class, CrusherLubricationHandler::new);
 	}
-	
+
 	/*
 	@SubscribeEvent
 	public static void registerEntityTypes(RegisterEvent.RegisterHelper<EntityType<?>> event){
@@ -276,6 +292,17 @@ public class IPContent{
 		//event.register(IPParticleTypes.FLARE_FIRE);
 		//event.register(IPParticleTypes.FLUID_SPILL);
 	}*/
+
+	@OnlyIn(Dist.CLIENT)
+	@SubscribeEvent
+	public static void registerParticles(RegisterEvent event){
+		event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> {
+			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "flare_fire"), IPParticleTypes.FLARE_FIRE);
+			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "fluid_spill"), IPParticleTypes.FLUID_SPILL);
+		});
+		// event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
+		// event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
+	}
 	
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
@@ -283,5 +310,9 @@ public class IPContent{
 		// FIXME Guess this aint the place for these
 		//event.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
 		//event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
+		ParticleEngine manager = MCUtil.getParticleEngine();
+		
+		manager.register(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
+		manager.register(IPParticleTypes.FLUID_SPILL, new FluidSpill.Factory());
 	}
 }

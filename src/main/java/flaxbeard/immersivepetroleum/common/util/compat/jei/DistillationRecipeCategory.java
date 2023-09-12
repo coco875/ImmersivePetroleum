@@ -35,6 +35,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
+
+// import IDrawableStatic;
 
 public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTowerRecipe>{
 	public static final ResourceLocation ID = ResourceUtils.ip("distillation");
@@ -118,12 +121,12 @@ public class DistillationRecipeCategory extends IPRecipeCategory<DistillationTow
 							.withStyle(ChatFormatting.GOLD, ChatFormatting.UNDERLINE);
 					
 					tooltip.add(0, text);
-					tooltip.add(2, toTextComponent(chance));
+					tooltip.add(2, toComponent(chance));
 				}
 			}
 		}
 		
-		private Component toTextComponent(double chance){
+		private Component toComponent(double chance){
 			return Component.literal(String.format(Locale.ENGLISH, "%.2f%%", 100D * chance)).withStyle(ChatFormatting.GRAY);
 		}
 	}

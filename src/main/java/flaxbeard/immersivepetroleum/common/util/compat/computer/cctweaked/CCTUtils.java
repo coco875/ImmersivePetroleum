@@ -7,6 +7,7 @@ import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class CCTUtils{
 	public static Map<String, Object> itemToMap(ItemStack stack){

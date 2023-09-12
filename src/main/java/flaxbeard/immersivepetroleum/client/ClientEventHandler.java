@@ -53,6 +53,7 @@ import net.minecraftforge.client.event.RenderBlockScreenEffectEvent.OverlayType;
 import net.minecraftforge.client.event.RenderGuiOverlayEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.client.event.RenderLevelStageEvent.Stage;
+import net.minecraftforge.client.model.data.ModelData;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.gui.overlay.VanillaGuiOverlay;
 import net.minecraftforge.client.model.data.ModelData;

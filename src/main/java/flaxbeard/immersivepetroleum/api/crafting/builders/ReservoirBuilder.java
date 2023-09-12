@@ -13,6 +13,7 @@ import flaxbeard.immersivepetroleum.common.crafting.Serializers;
 import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class ReservoirBuilder extends IEFinishedRecipe<ReservoirBuilder>{
 	private String fluid;

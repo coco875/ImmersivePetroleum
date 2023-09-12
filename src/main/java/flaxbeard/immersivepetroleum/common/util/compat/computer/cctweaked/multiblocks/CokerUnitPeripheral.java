@@ -11,6 +11,7 @@ import flaxbeard.immersivepetroleum.common.util.RegistryUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.CCTUtils;
 import flaxbeard.immersivepetroleum.common.util.compat.computer.cctweaked.multiblocks.generic.PoweredMultiblockPeripheral;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraftforge.registries.ForgeRegistries;
 
 public class CokerUnitPeripheral extends PoweredMultiblockPeripheral{
 	CokerUnitTileEntity master;

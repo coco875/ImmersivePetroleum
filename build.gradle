@@ -1,9 +1,9 @@
 buildscript {
 	repositories {
 		maven { url = 'https://maven.minecraftforge.net' }
+		maven { url = 'https://maven.parchmentmc.org' }
 		jcenter()
 		mavenCentral()
-		maven { url 'https://maven.parchmentmc.org' }
 	}
 	dependencies {
 		classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: '5.1.+', changing: true
@@ -14,26 +14,12 @@ apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 apply plugin: 'maven-publish'
 apply plugin: 'org.parchmentmc.librarian.forgegradle'
-sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17'
+// sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '17'
 //----------------------------------------------------------------------------------------------------------------------
-
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 version = '4.2.0-22'
 group = 'flaxbeard.immersivepetroleum'
-archivesBaseName = 'ImmersivePetroleum-${version_minecraft}'
-
-repositories {
-	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }		 // IE & CT Files
-	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
-	maven { name = "CurseMaven";	url = 'https://cfa2.cursemaven.com' }		   // Needed for PNC
-	maven { // CC-Tweaked
-		url 'https://squiddev.cc/maven/'
-		content {
-			includeGroup 'org.squiddev'
-		}
-	}
-	
-	flatDir { dirs 'flatdir' }
-}
+archivesBaseName = "ImmersivePetroleum-${version_minecraft}"
 
 sourceSets {
 	main {
@@ -52,8 +38,10 @@ sourceSets {
 	}
 }
 
+println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
 	mappings channel: 'parchment', version: version_parchment
+
 	accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 	
 	runs {
@@ -114,20 +102,43 @@ minecraft {
 	}
 }
 
+repositories {
+	maven {	name = "BlameJared";	url = "https://maven.blamejared.com/" }		 // IE & CT Files
+	maven { name = "DVS1 Maven FS"; url = "https://dvs1.progwml6.com/files/maven" } // JEI & Tinkers Files
+	maven { name = "CurseMaven";	url = 'https://cfa2.cursemaven.com' }		   // Needed for PNC
+	maven { // CC-Tweaked
+		url 'https://squiddev.cc/maven/'
+		content {
+			includeGroup 'org.squiddev'
+		}
+	}
+	maven { url = "https://modmaven.dev/"}
+	
+	flatDir { dirs 'flatdir' }
+
+}
+
 dependencies {
 	minecraft "net.minecraftforge:forge:${version_minecraft}-${version_forge}"
 	
 	implementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}")
-	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:api")
+	//compile fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:1.18.1-7.1.0-145:api")
 	datagenImplementation fg.deobf("blusunrize.immersiveengineering:ImmersiveEngineering:${version_ie}:datagen")
 
-	//implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
-	//implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
+	// implementation fg.deobf("vazkii.patchouli:Patchouli:1.18.2-67")
+	compileOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-77:api")
+    runtimeOnly fg.deobf("vazkii.patchouli:Patchouli:1.19.2-77")
+	// implementation fg.deobf("curse.maven:pneumaticcraft-repressurized-281849:3913972")
+	// compileOnly fg.deobf("me.desht.pneumaticcraft:pneumaticcraft-repressurized:1.19.2-4.3.7-api")
+	runtimeOnly fg.deobf("me.desht.pneumaticcraft:pneumaticcraft-repressurized:1.19.2-4.3.7")
+	implementation fg.deobf("me.desht.pneumaticcraft:pneumaticcraft-repressurized:1.19.2-4.3.7")
 
-	compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${version_ct}")
+	compileOnly(fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.19.2:${version_ct}"))
+	// compileOnly fg.deobf("com.blamejared.crafttweaker:CraftTweaker-forge-1.18.2:${version_ct}")
 	
+	runtimeOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
 	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-forge-api:${version_jei}")
-	compileOnly fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
+	implementation fg.deobf("mezz.jei:jei-${version_minecraft}-common-api:${version_jei}")
 	
     compileOnly fg.deobf("org.squiddev:cc-tweaked-${version_minecraft}:${version_cctweaked}")
 }
@@ -151,10 +162,15 @@ jar {
 	}
 }
 
-def reobfFile = file("$buildDir/reobfJar/output.jar")
-def reobfArtifact = artifacts.add('default', reobfFile){ type 'jar'; builtBy 'reobfJar'; }
+// def reobfFile = file("$buildDir/reobfJar/output.jar")
+// def reobfArtifact = artifacts.add('default', reobfFile){ type 'jar'; builtBy 'reobfJar'; }
+jar.finalizedBy('reobfJar')
 
 publishing {
-	publications { mavenJava(MavenPublication){ artifact reobfArtifact } }
+	publications { mavenJava(MavenPublication){ artifact jar } }// reobfArtifact } }
 	repositories { maven { url "file:///${project.projectDir}/mcmodsrepo" } }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation
 }
