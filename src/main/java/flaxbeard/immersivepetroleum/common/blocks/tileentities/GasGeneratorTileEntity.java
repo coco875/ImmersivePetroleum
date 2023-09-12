@@ -145,6 +145,17 @@ public class GasGeneratorTileEntity extends ImmersiveConnectableBlockEntity impl
 			this.energyStorage.deserializeNBT(nbt.get("energy"));
 		}
 	}
+
+	@Override
+	public void onBEPlaced(BlockPlaceContext ctx) {
+		ItemStack stack = ctx.getItemInHand();
+		if(stack.hasTag()){
+			CompoundTag nbt = stack.getOrCreateTag();
+			
+			this.tank.readFromNBT(nbt.getCompound("tank"));
+			this.energyStorage.deserializeNBT(nbt.get("energy"));
+		}
+	}
 	
 	@Override
 	public void setChanged(){
