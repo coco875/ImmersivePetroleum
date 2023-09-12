@@ -14,6 +14,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import flaxbeard.immersivepetroleum.client.render.DerrickRenderer;
+import flaxbeard.immersivepetroleum.client.render.SeismicSurveyBarrelRenderer;
 
 /** A central place for all of ImmersivePetroleums Models, including some OBJ Models */
 @Mod.EventBusSubscriber(modid = ImmersivePetroleum.MODID, value = Dist.CLIENT, bus = Bus.MOD)

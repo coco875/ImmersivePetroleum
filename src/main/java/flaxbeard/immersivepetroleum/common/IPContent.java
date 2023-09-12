@@ -83,6 +83,8 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber.Bus;
 import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
 import net.minecraftforge.registries.RegistryObject;
+import flaxbeard.immersivepetroleum.common.entity.MotorboatEntity;
+import flaxbeard.immersivepetroleum.client.utils.MCUtil;
 
 // import IPFluidEntry;
 
@@ -284,21 +286,12 @@ public class IPContent{
 //		}
 	}
 	*/
-	
-	/*
-	@OnlyIn(Dist.CLIENT)
-	@SubscribeEvent
-	public static void registerParticles(RegisterEvent.RegisterHelper<ParticleType<?>> event){
-		//event.register(IPParticleTypes.FLARE_FIRE);
-		//event.register(IPParticleTypes.FLUID_SPILL);
-	}*/
-
 	@OnlyIn(Dist.CLIENT)
 	@SubscribeEvent
 	public static void registerParticles(RegisterEvent event){
 		event.register(ForgeRegistries.Keys.PARTICLE_TYPES, helper -> {
-			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "flare_fire"), IPParticleTypes.FLARE_FIRE);
-			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "fluid_spill"), IPParticleTypes.FLUID_SPILL);
+			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "flare_fire"), IPParticleTypes.FLARE_FIRE.get());
+			helper.register(new ResourceLocation(ImmersivePetroleum.MODID, "fluid_spill"), IPParticleTypes.FLUID_SPILL.get());
 		});
 		// event.getRegistry().register(IPParticleTypes.FLARE_FIRE);
 		// event.getRegistry().register(IPParticleTypes.FLUID_SPILL);
@@ -312,7 +305,7 @@ public class IPContent{
 		//event.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
 		ParticleEngine manager = MCUtil.getParticleEngine();
 		
-		manager.register(IPParticleTypes.FLARE_FIRE, FlareFire.Factory::new);
-		manager.register(IPParticleTypes.FLUID_SPILL, new FluidSpill.Factory());
+		manager.register(IPParticleTypes.FLARE_FIRE.get(), FlareFire.Factory::new);
+		manager.register(IPParticleTypes.FLUID_SPILL.get(), new FluidSpill.Factory());
 	}
 }

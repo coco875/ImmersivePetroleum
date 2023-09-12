@@ -29,6 +29,7 @@ import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.RegistryObject;
+import flaxbeard.immersivepetroleum.ImmersivePetroleum;
 
 public class MolotovItemEntity extends ThrowableItemProjectile{	
 	public static EntityType<MolotovItemEntity> createType(){

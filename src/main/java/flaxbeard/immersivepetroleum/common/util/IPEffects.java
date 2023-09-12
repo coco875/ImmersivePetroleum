@@ -40,11 +40,6 @@ public class IPEffects{
 				public boolean isVisibleInInventory(MobEffectInstance instance){
 					return false;
 				}
-				
-				@Override
-				public boolean renderInventoryText(MobEffectInstance instance, EffectRenderingInventoryScreen<?> screen, PoseStack poseStack, int x, int y, int blitOffset){
-					return false;
-				}
 			});
 		}
 		

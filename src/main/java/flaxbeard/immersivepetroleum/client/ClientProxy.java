@@ -142,11 +142,7 @@ public class ClientProxy extends CommonProxy{
 		
 		MinecraftForge.EVENT_BUS.register(new DebugRenderHandler());
 		MinecraftForge.EVENT_BUS.register(new SeismicResultRenderer());
-	}
-
-	public static void init(RegisterKeyMappingsEvent event) {
 		ProjectorItem.ClientInputHandler.keybind_preview_flip.setKeyConflictContext(KeyConflictContext.IN_GAME);
-		event.register(ClientInputHandler.keybind_preview_flip);
 	}
 	
 	@Override

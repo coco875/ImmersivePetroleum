@@ -96,32 +96,9 @@ public class AutoLubricatorTileEntity extends IPTileEntityBase implements IPComm
 		if(!toItem || write)
 			nbt.put("tank", tankTag);
 	}
-
-	@Override
-	public void onBEPlaced(BlockPlaceContext ctx){
-	}
 	
-	// @Override
-	// public void readOnPlacement(LivingEntity placer, ItemStack stack){
-	// 	if(stack.hasTag()){
-	// 		readTank(stack.getTag());
-	// 	}
-		
-	// 	if(placer instanceof Player player){
-	// 		BlockPos target = this.worldPosition.relative(this.facing);
-	// 		BlockEntity te = this.level.getBlockEntity(target);
-			
-	// 		ILubricationHandler<BlockEntity> handler = LubricatedHandler.getHandlerForTile(te);
-	// 		if(handler != null && handler.isPlacedCorrectly(this.level, this, this.facing) != null){
-	// 			Utils.unlockIPAdvancement(player, "main/auto_lubricator");
-	// 		}
-	// 	}
-	// }
-
 	@Override
-	public void onBEPlaced(BlockPlaceContext ctx) {
-		ItemStack stack = ctx.getItemInHand();
-		LivingEntity placer = ctx.getPlayer();
+	public void readOnPlacement(LivingEntity placer, ItemStack stack){
 		if(stack.hasTag()){
 			readTank(stack.getTag());
 		}
